@@ -7,9 +7,6 @@ Version:	3.0.3
 Release:	3
 License:	GPL
 Group:		Applications/Mail
-Group(de):	Applikationen/Post
-Group(pl):	Aplikacje/Poczta
-Group(pt):	Aplicações/Correio Eletrônico
 Source0:	http://listes.cru.fr/sympa/distribution/%{name}-%{version}.tar.gz
 URL:		http://listes.cru.fr/sympa/
 Patch0:		%{name}-makefile.patch
