@@ -34,29 +34,29 @@ Requires(post):	fileutils
 Requires(post):	grep
 Requires(postun):	/usr/sbin/groupdel
 Requires(postun):	/usr/sbin/userdel
-Requires:	MHonArc 	   >= 2.4.5
+Requires:	MHonArc >= 2.4.5
 Requires:	apache
-Requires:	perl 		   >= 5.6.0
-Requires:	perl-MailTools     >= 1.14
-Requires:	perl-MIME-Base64   >= 1.0
-Requires:	perl-IO-stringy    >= 1.0
+Requires:	perl >= 5.6.0
+Requires:	perl-MailTools >= 1.14
+Requires:	perl-MIME-Base64 >= 1.0
+Requires:	perl-IO-stringy >= 1.0
 Requires:	perl-Locale-Msgcat >= 1.03
-Requires:	perl-MIME-tools    >= 5.209
-Requires:	perl-CGI-modules   >= 2.52
-Requires:	perl-DBI	   >= 1.06
-Requires:	perl-ldap          >= 0.10
-Requires:	perl-DB_File	   >= 1.805
-Requires:	perl-CGI	   >= 2.85
+Requires:	perl-MIME-tools >= 5.209
+Requires:	perl-CGI-modules >= 2.52
+Requires:	perl-DBI >= 1.06
+Requires:	perl-ldap >= 0.10
+Requires:	perl-DB_File >= 1.805
+Requires:	perl-CGI >= 2.85
 ## Also requires a DBD for the DBMS
 ## (perl-DBD-Pg or Perl- Msql-Mysql-modules)
-Requires:	perl-FCGI          >= 0.48
+Requires:	perl-FCGI >= 0.48
 Requires:	perl-Digest-MD5
-Requires:	openssl 	   >= 0.9.7
+Requires:	openssl >= 0.9.7
 Provides:	group(sympa)
 Provides:	user(sympa)
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define home_s  /var/lib/sympa
+%define		home_s	/var/lib/sympa
 
 %description
 Sympa is scalable and highly customizable mailing list manager. It can
@@ -232,31 +232,31 @@ fi
 # needs fixing - don't use attr(-)!
 %attr(755,sympa,sympa) %dir %{home_s}
 %attr(755,sympa,sympa) %dir %{home_s}/bin
-%attr(  -,sympa,sympa) %{home_s}/bin/*.pl
-%attr(  -,sympa,sympa) %{home_s}/bin/create_db.*
+%attr(-,sympa,sympa) %{home_s}/bin/*.pl
+%attr(-,sympa,sympa) %{home_s}/bin/create_db.*
 %attr(4755,sympa,sympa) %{home_s}/bin/queue
 %attr(4755,sympa,sympa) %{home_s}/bin/bouncequeue
 %attr(4755,sympa,sympa) %{home_s}/bin/*wrapper
 
 %attr(755,sympa,sympa) %dir %{home_s}/etc
-%attr(  -,sympa,sympa) %{home_s}/etc/*
+%attr(-,sympa,sympa) %{home_s}/etc/*
 %attr(755,sympa,sympa) %dir %{home_s}/expl
 #%attr(  -,sympa,sympa) %{home_s}/expl/*
 
 %attr(755,sympa,sympa) %dir %{home_s}/lib
 %attr(755,sympa,sympa) %dir %{home_s}/lib/Marc
-%attr(  -,sympa,sympa) %{home_s}/lib/Marc/*
-%attr(  -,sympa,sympa) %{home_s}/lib/*.pm
-%attr(  -,sympa,sympa) %{home_s}/lib/*.pl
+%attr(-,sympa,sympa) %{home_s}/lib/Marc/*
+%attr(-,sympa,sympa) %{home_s}/lib/*.pm
+%attr(-,sympa,sympa) %{home_s}/lib/*.pl
 
 %attr(755,sympa,sympa) %dir %{home_s}/nls
-%attr(  -,sympa,sympa) %{home_s}/nls/*.msg
+%attr(-,sympa,sympa) %{home_s}/nls/*.msg
 %attr(755,sympa,sympa) %dir %{home_s}/sample
-%attr(  -,sympa,sympa) %{home_s}/sample/*
+%attr(-,sympa,sympa) %{home_s}/sample/*
 
 %attr(755,sympa,sympa) %dir %{home_s}/sbin
-%attr(  -,sympa,sympa) %{home_s}/sbin/*.pl
-%attr(  -,sympa,sympa) %{home_s}/sbin/wwsympa.fcgi
+%attr(-,sympa,sympa) %{home_s}/sbin/*.pl
+%attr(-,sympa,sympa) %{home_s}/sbin/wwsympa.fcgi
 
 %attr(755,sympa,sympa) %dir %{home_s}/spool
 %attr(744,sympa,sympa) %dir %{home_s}/spool/*
@@ -266,6 +266,6 @@ fi
 
 %dir %{_sysconfdir}/sympa
 %attr(640,sympa,sympa) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/sympa/*.conf
-%attr(640,sympa,root)  %config(noreplace) %verify(not mtime md5 size) /etc/sysconfig/sympa
-%attr(754,root,root)  /etc/rc.d/init.d/sympa
+%attr(640,sympa,root) %config(noreplace) %verify(not mtime md5 size) /etc/sysconfig/sympa
+%attr(754,root,root) /etc/rc.d/init.d/sympa
 %{_mandir}/man[58]/*
