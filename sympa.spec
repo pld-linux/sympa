@@ -22,14 +22,17 @@ Patch1:		%{name}-wwslib-pl.patch
 URL:		http://listes.cru.fr/sympa/
 BuildRequires:	autoconf
 BuildRequires:	automake
+BuildRequires:	rpmbuild(macros) >= 1.159
 PreReq:		rc-scripts
-Requires(pre):	/usr/bin/getgid
 Requires(pre):	/bin/id
-Requires(pre):	/usr/sbin/useradd
+Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
+Requires(pre):	/usr/sbin/useradd
 Requires(post,preun):	/sbin/chkconfig
 Requires(post):	fileutils
 Requires(post):	grep
+Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	/usr/sbin/userdel
 Requires:	MHonArc 	   >= 2.4.5
 Requires:	apache
 Requires:	perl 		   >= 5.6.0
@@ -48,6 +51,8 @@ Requires:	perl-CGI	   >= 2.85
 Requires:	perl-FCGI          >= 0.48
 Requires:	perl-Digest-MD5
 Requires:	openssl 	   >= 0.9.7
+Provides:	group(sympa)
+Provides:	user(sympa)
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define home_s  /var/lib/sympa
@@ -135,21 +140,22 @@ install %{SOURCE5} $RPM_BUILD_ROOT%{_sysconfdir}/sympa/wwsympa.conf
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-if [ -n "`getgid sympa`" ]; then
-	if [ "`getgid sympa`" != "71" ]; then
+if [ -n "`/usr/bin/getgid sympa`" ]; then
+	if [ "`/usr/bin/getgid sympa`" != "71" ]; then
 		echo "Error: group sympa doesn't have gid=71. Correct this before installing sympa." 1>&2
 		exit 1
 	fi
 else
-	/usr/sbin/groupadd -g 71 -r -f sympa
+	/usr/sbin/groupadd -g 71 sympa 1>&2
 fi
-if [ -n "`id -u sympa 2>/dev/null`" ]; then
-	if [ "`id -u sympa`" != "71" ]; then
+if [ -n "`/bin/id -u sympa 2>/dev/null`" ]; then
+	if [ "`/bin/id -u sympa`" != "71" ]; then
 		echo "Error: user sympa doesn't have uid=71. Correct this before installing sympa." 1>&2
 		exit 1
 	fi
 else
-	/usr/sbin/useradd -u 71 -r -d /home/services/sympa -s /bin/false -c "sympa" -g sympa sympa 1>&2
+	/usr/sbin/useradd -u 71 -d %{home_s} -s /bin/false \
+		-c "sympa" -g sympa sympa 1>&2
 fi
 
 %post
@@ -203,9 +209,9 @@ if [ "$1" = "0" ]; then
 fi
 
 %postun
-if [ ! -d %{home_s} ]; then
-	/usr/sbin/userdel sympa
-	/usr/sbin/groupdel sympa
+if [ "$1" = "0" ]; then
+	%userremove sympa
+	%groupremove sympa
 fi
 if [ "$1" = "0" -a -d /etc/smrsh ]; then
 	if [ -L /etc/smrsh/queue ]; then
