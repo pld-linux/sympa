@@ -5,8 +5,8 @@ diff -Nur sympa-3.3.4b.5.org/wwsympa/wwslib.pm sympa-3.3.4b.5/wwsympa/wwslib.pm
  @EXPORT = ();
  
  ## Supported web languages
--@languages = ('fr','us','es','it','cn','cz','de','hu');
-+@languages = ('fr','us','es','it','cn','cz','de','hu','pl');
+-@languages = ('fr','us','es','it','cn','cz','de','hu','et','ro');
++@languages = ('fr','us','es','it','cn','cz','de','hu','et','ro','pl');
  
  %reception_mode = ('mail' => 'normal',
  		   'digest' => 'digest',

@@ -1,7 +1,7 @@
-diff -Nur sympa-3.3.4b.5.org/Makefile.am sympa-3.3.4b.5/Makefile.am
---- sympa-3.3.4b.5.org/Makefile.am	Wed Feb 27 15:32:31 2002
-+++ sympa-3.3.4b.5/Makefile.am	Fri Apr 19 12:24:22 2002
-@@ -277,8 +277,6 @@
+diff -Nur sympa-3.3.5.org/Makefile.am sympa-3.3.5/Makefile.am
+--- sympa-3.3.5.org/Makefile.am	Tue May 14 17:28:21 2002
++++ sympa-3.3.5/Makefile.am	Wed May 15 21:25:47 2002
+@@ -292,8 +292,6 @@
  		PIDDIR=$(PIDDIR); export PIDDIR; \
  		$(PERL) ../../subst.pl $$manfile \
  	) ;\
@@ -10,7 +10,7 @@ diff -Nur sympa-3.3.4b.5.org/Makefile.am sympa-3.3.4b.5/Makefile.am
  	done
  
  
-@@ -295,21 +293,15 @@
+@@ -310,21 +308,15 @@
  
  installdir:
  	echo "Setting $(USER) owner of $(DESTDIR)$(DIR)"
@@ -32,7 +32,7 @@ diff -Nur sympa-3.3.4b.5.org/Makefile.am sympa-3.3.4b.5/Makefile.am
  		fi \
  	done \
  	fi
-@@ -320,8 +312,6 @@
+@@ -335,8 +327,6 @@
  		if [ ! -d $(DESTDIR)$(DIR)/$$dir ] ; then \
  			echo "Creating $(DESTDIR)$(DIR)/$$dir"; \
  			mkdir -p $(DESTDIR)$(DIR)/$$dir; \
@@ -41,7 +41,7 @@ diff -Nur sympa-3.3.4b.5.org/Makefile.am sympa-3.3.4b.5/Makefile.am
  		fi \
  	done \
  	fi
-@@ -333,8 +323,6 @@
+@@ -348,8 +338,6 @@
  		if [ ! -d $(DESTDIR)$$dir ] ; then \
  			echo "Creating $(DESTDIR)$$dir"; \
  			mkdir -p $(DESTDIR)$$dir; \
@@ -50,19 +50,19 @@ diff -Nur sympa-3.3.4b.5.org/Makefile.am sympa-3.3.4b.5/Makefile.am
  			chmod 770 $(DESTDIR)$$dir; \
  		fi \
  	done \
-@@ -367,8 +355,6 @@
- 		SPOOLDIR=$(SPOOLDIR); export SPOOLDIR; \
- 		$(PERL) ../../../subst.pl $$cfile \
- 	) ;\
+@@ -361,8 +349,6 @@
+ 	if [ ! -f $(DESTDIR)$(CONFDIR)/$$cfile ] ; then \
+ 	echo "Installing sample config file $$cfile..."; \
+ 	$(PERL) -I $(DESTDIR)$(SBINDIR) $(DESTDIR)$(SBINDIR)/sympa_wizard.pl -c $$cfile; \
 -	chown $(USER) $(DESTDIR)$(CONFDIR)/$$cfile; \
 -	chgrp $(GROUP) $(DESTDIR)$(CONFDIR)/$$cfile; \
+ 	INITCONF='1'; \
  	fi \
- 	done
- 
-diff -Nur sympa-3.3.4b.5.org/src/Makefile sympa-3.3.4b.5/src/Makefile
---- sympa-3.3.4b.5.org/src/Makefile	Fri Dec  7 17:59:53 2001
-+++ sympa-3.3.4b.5/src/Makefile	Fri Apr 19 12:24:22 2002
-@@ -143,13 +143,6 @@
+ 	done; \
+diff -Nur sympa-3.3.5.org/src/Makefile sympa-3.3.5/src/Makefile
+--- sympa-3.3.5.org/src/Makefile	Tue May  7 16:18:08 2002
++++ sympa-3.3.5/src/Makefile	Wed May 15 21:31:27 2002
+@@ -148,15 +148,6 @@
  	fi
  
  installmod:
@@ -73,12 +73,14 @@ diff -Nur sympa-3.3.4b.5.org/src/Makefile sympa-3.3.4b.5/src/Makefile
 -	chgrp -R $(GROUP) $(DESTDIR)$(LIBDIR)
 -	chown root $(DESTDIR)$(MAILERPROGDIR)/aliaswrapper
 -	chgrp $(GROUP) $(DESTDIR)$(MAILERPROGDIR)/aliaswrapper
+-	chown root $(DESTDIR)$(MAILERPROGDIR)/virtualwrapper
+-	chgrp $(GROUP) $(DESTDIR)$(MAILERPROGDIR)/virtualwrapper
  	@echo "Setting privileges..."
  	chmod 755 $(DESTDIR)$(SBINDIR) $(DESTDIR)$(ETCBINDIR) 
  	chmod 755 $(DESTDIR)$(ETCBINDIR)/scenari $(DESTDIR)$(ETCBINDIR)/templates $(DESTDIR)$(ETCBINDIR)/list_task_models $(DESTDIR)$(ETCBINDIR)/global_task_models
-diff -Nur sympa-3.3.4b.5.org/src/etc/sample/Makefile sympa-3.3.4b.5/src/etc/sample/Makefile
---- sympa-3.3.4b.5.org/src/etc/sample/Makefile	Fri Nov 30 11:39:09 2001
-+++ sympa-3.3.4b.5/src/etc/sample/Makefile	Fri Apr 19 12:24:45 2002
+diff -Nur sympa-3.3.5.org/src/etc/sample/Makefile sympa-3.3.5/src/etc/sample/Makefile
+--- sympa-3.3.5.org/src/etc/sample/Makefile	Fri Nov 30 11:39:09 2001
++++ sympa-3.3.5/src/etc/sample/Makefile	Wed May 15 21:27:48 2002
 @@ -70,8 +70,6 @@
  		mkdir -p $(DESTDIR)$(DIR)/expl; \
  		mkdir -p $(DESTDIR)$(DIR)/expl/test; \
@@ -88,9 +90,9 @@ diff -Nur sympa-3.3.4b.5.org/src/etc/sample/Makefile sympa-3.3.4b.5/src/etc/samp
  	fi
  
  
-diff -Nur sympa-3.3.4b.5.org/wwsympa/Makefile sympa-3.3.4b.5/wwsympa/Makefile
---- sympa-3.3.4b.5.org/wwsympa/Makefile	Fri Jan 25 10:34:57 2002
-+++ sympa-3.3.4b.5/wwsympa/Makefile	Fri Apr 19 12:24:22 2002
+diff -Nur sympa-3.3.5.org/wwsympa/Makefile sympa-3.3.5/wwsympa/Makefile
+--- sympa-3.3.5.org/wwsympa/Makefile	Fri Jan 25 10:34:57 2002
++++ sympa-3.3.5/wwsympa/Makefile	Wed May 15 21:27:48 2002
 @@ -38,18 +38,6 @@
  newinstall: makedir $(sbin_SUBST) $(cgi_SUBST) $(lib_SUBST) substcgi substsbin substlib installtemplates installicons installsrc installmod
  
