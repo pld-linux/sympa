@@ -76,7 +76,7 @@ subskrybentów) i przychodzi z pe³nym (u¿ytkownika i administratora)
 interfejsem WWW. Jest zlokalizowany, obs³uguje jêzyki us, fr, de, es,
 it, fi, zh. Jêzyk skryptowy pozwala na rozszerzanie komend. Sympa mo¿e
 obs³ugiwaæ katalog LDAP lub relacyjne bazy danych do tworzenia
-dynamicznych list. Obs³uguje autentykacjê i szyfrowanie oparte o
+dynamicznych list. Obs³uguje uwierzytelnianie i szyfrowanie oparte o
 S/MIME.
 
 %prep
