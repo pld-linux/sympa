@@ -5,11 +5,13 @@ Name:		sympa
 Version:	3.0.3
 Release:	2
 License:	GPL
-Group:		Aplications/Mail
+Group:		Applications/Mail
+Group(de):	Applikationen/Post
 Group(pl):	Aplikacje/Poczta
+Group(pt):	Aplicações/Correio Eletrônico
 Source0:	http://listes.cru.fr/sympa/distribution/%{name}-%{version}.tar.gz
 URL:		http://listes.cru.fr/sympa/
-Patch0:		sympa-makefile.patch
+Patch0:		%{name}-makefile.patch
 Requires:	perl 		   >= 5.6.0
 Requires:	perl-MailTools     >= 1.14
 Requires:	perl-MIME-Base64   >= 1.0
