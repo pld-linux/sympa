@@ -8,7 +8,7 @@ Release:	1
 License:	GPL
 Group:		Applications/Mail
 Source0:	http://listes.cru.fr/sympa/distribution/%{name}-%{version}.tar.gz
-# Source0-md5:	bfee1e88bd77f4ac34362c600141dfc3
+# Source0-md5:	d8977492684948216ee76b95befb287f
 Source1:	%{name}-pl-3.3.5-020515.tar.bz2
 # Source1-md5:	2a46fe55e877cc0a471507f8c93fbeab
 Source2:	%{name}.init
