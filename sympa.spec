@@ -13,10 +13,22 @@ Source2:	%{name}.init
 Source3:	%{name}.sysconfig
 Source4:	%{name}.conf
 Source5:	%{name}-www.conf
-URL:		http://listes.cru.fr/sympa/
 Patch0:		%{name}-Makefile.patch
 Patch1:		%{name}-wwslib-pl.patch
 Patch2:		%{name}-compare.patch
+URL:		http://listes.cru.fr/sympa/
+BuildRequires:	autoconf
+BuildRequires:	automake
+PreReq:		rc-scripts
+Requires(pre):	/usr/bin/getgid
+Requires(pre):	/bin/id
+Requires(pre):	/usr/sbin/useradd
+Requires(pre):	/usr/sbin/groupadd
+Requires(post,preun):	/sbin/chkconfig
+Requires(post):	fileutils
+Requires(post):	grep
+Requires:	MHonArc 	   >= 2.4.5
+Requires:	apache
 Requires:	perl 		   >= 5.6.0
 Requires:	perl-MailTools     >= 1.14
 Requires:	perl-MIME-Base64   >= 1.0
@@ -31,17 +43,8 @@ Requires:	perl-CGI	   >= 2.85
 ## Also requires a DBD for the DBMS
 ## (perl-DBD-Pg or Perl- Msql-Mysql-modules)
 Requires:	perl-FCGI          >= 0.48
-Requires:	MHonArc 	   >= 2.4.5
 Requires:	perl-Digest-MD5
-Requires:	apache
 Requires:	openssl 	   >= 0.9.5a
-Requires(pre):	/usr/bin/getgid
-Requires(pre):	/bin/id
-Requires(pre):	/usr/sbin/useradd
-Requires(pre):	/usr/sbin/groupadd
-Requires(post,preun):	/sbin/chkconfig
-BuildRequires:	automake
-BuildRequires:	autoconf
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define home_s  /var/lib/sympa
@@ -85,7 +88,7 @@ rm -f missing
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/sysconfig
 
-%{__make} \
+%{__make} install \
 	INITDIR=/etc/rc.d/init.d \
 	HOST=MYHOST \
 	DIR=%{home_s} \
@@ -99,12 +102,15 @@ install -d $RPM_BUILD_ROOT/etc/sysconfig
 	EXPL_DIR=%{home_s}/expl \
 	ETCBINDIR=%{home_s}/etc \
 	CONFDIR=%{_sysconfdir}/sympa \
-	DESTDIR=$RPM_BUILD_ROOT install
+	DESTDIR=$RPM_BUILD_ROOT
 
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/sympa
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/sympa
 install %{SOURCE4} $RPM_BUILD_ROOT/%{_sysconfdir}/sympa/sympa.conf
 install %{SOURCE5} $RPM_BUILD_ROOT/%{_sysconfdir}/sympa/wwsympa.conf
+
+%clean
+rm -rf $RPM_BUILD_ROOT
 
 %pre
 if [ -n "`getgid sympa`" ]; then
@@ -124,48 +130,50 @@ else
 	/usr/sbin/useradd -u 71 -r -d /home/services/sympa -s /bin/false -c "sympa" -g sympa sympa 1>&2
 fi
 
+%post
+/sbin/chkconfig --add sympa
+perl -pi -e "s|MYHOST|${HOSTNAME}|g" /etc/sympa/sympa.conf /etc/sympa/wwsympa.conf
+
 # Setup log facility for Sympa
 if [ -f /etc/syslog.conf ] ;then
-  if [ `grep -c sympa /etc/syslog.conf` -eq 0 ] ;then
-    typeset -i cntlog
-    cntlog=0
-    while [ `grep -c local${cntlog} /etc/syslog.conf` -gt 0 ];do cntlog=${cntlog}+1;done
-    if [ ${cntlog} -le 9 ];then
-      echo "# added by sympa-3.0 rpm $(date)" >> /etc/syslog.conf
-      echo "local${cntlog}.*       /var/log/sympa" >> /etc/syslog.conf
-    fi
-  fi
+	if [ `grep -c sympa /etc/syslog.conf` -eq 0 ] ;then
+		typeset -i cntlog
+		cntlog=0
+		while [ `grep -c local${cntlog} /etc/syslog.conf` -gt 0 ]; do
+			cntlog=${cntlog}+1
+		done
+		if [ ${cntlog} -le 9 ];then
+			echo "# added by sympa-3.0 rpm $(date)" >> /etc/syslog.conf
+			echo "local${cntlog}.*       /var/log/sympa" >> /etc/syslog.conf
+		fi
+	fi
 fi
 
 # try to add some sample entries in /etc/aliases for sympa
 for a_file in /etc/aliases /etc/postfix/aliases /etc/mail/sympa.aliases; do
-  if [ -f ${a_file} ]; then
-    if [ `grep -c sympa ${a_file}` -eq 0 ]; then
-      cp -f ${a_file} ${a_file}.rpmorig
-      echo >> ${a_file}
-      echo "# added by sympa-3.0 rpm "$(date) >> ${a_file}
-      if [ `grep -c listmaster ${a_file}` -eq 0 ]; then
-        echo "# listmaster:root" >> ${a_file}
-      fi
-      echo "# sympa:\"|/home/services/sympa/bin/queue 0 sympa\"" >> ${a_file}
-      echo "# sympa-request:listmaster@${HOSTNAME}" >> ${a_file}
-      echo "# sympa-owner:listmaster@${HOSTNAME}" >> ${a_file}
-      echo "" >> ${a_file}
+	if [ -f ${a_file} ]; then
+		if [ `grep -c sympa ${a_file}` -eq 0 ]; then
+			cp -f ${a_file} ${a_file}.rpmorig
+			echo >> ${a_file}
+			echo "# added by sympa-3.0 rpm "$(date) >> ${a_file}
+			if [ `grep -c listmaster ${a_file}` -eq 0 ]; then
+				echo "# listmaster:root" >> ${a_file}
+			fi
+			echo "# sympa:\"|/home/services/sympa/bin/queue 0 sympa\"" >> ${a_file}
+			echo "# sympa-request:listmaster@${HOSTNAME}" >> ${a_file}
+			echo "# sympa-owner:listmaster@${HOSTNAME}" >> ${a_file}
+			echo "" >> ${a_file}
 #     /usr/bin/newaliases
-    fi
-  fi
+		fi
+	fi
 done
 
 # eventually, add queue to sendmail security shell
 if [ -d /etc/smrsh ]; then
-  if [ ! -e /etc/smrsh/queue ]; then
-    ln -s %{home_s}/bin/queue /etc/smrsh/queue
-  fi
+	if [ ! -e /etc/smrsh/queue ]; then
+		ln -sf %{home_s}/bin/queue /etc/smrsh/queue
+	fi
 fi
-
-%post
-/sbin/chkconfig --add sympa
-perl -pi -e "s|MYHOST|${HOSTNAME}|g" /etc/sympa/sympa.conf /etc/sympa/wwsympa.conf
 
 %preun
 if [ "$1" = "0" ]; then
@@ -178,55 +186,52 @@ if [ ! -d %{home_s} ]; then
 	/usr/sbin/groupdel sympa
 fi
 if [ "$1" = "0" -a -d /etc/smrsh ]; then
-  if [ -L /etc/smrsh/queue ]; then
-    rm -f /etc/smrsh/queue
-  fi
+	if [ -L /etc/smrsh/queue ]; then
+		rm -f /etc/smrsh/queue
+	fi
 fi
 
 %files
-%defattr(0755,sympa,sympa)
+%attr(644,root,root,755)
 %doc [ACKNR]*
 
-%dir %{home_s}
-%dir %{home_s}/bin
-%dir %{home_s}/lib/Marc
-%dir %{home_s}/sample
-%dir %{home_s}/expl
-%dir %{home_s}/spool
-%dir %{home_s}/nls
-%dir %{home_s}/etc
-
-%defattr(0744,sympa,sympa)
-%dir %{home_s}/spool/*
-
-# needs fixing - don't use defattr(-)!
-%defattr(-,sympa,sympa)
-%{home_s}/sample/*
-%{home_s}/lib/Marc/*
-%{home_s}/etc/*
-%{home_s}/expl/*
-
-%attr(0755,root,root)%dir /home/services/httpd/icons/sympa
-%attr(0644,root,root) /home/services/httpd/icons/sympa/*
-
-%defattr(-,sympa,sympa)
-%{home_s}/bin/*.pl
-%{home_s}/lib/*.pm
-%{home_s}/lib/*.pl
-%{home_s}/bin/create_db.*
-%{home_s}/sbin/*.pl
-%{home_s}/sbin/wwsympa.fcgi
-
+# needs fixing - don't use attr(-)!
+%attr(755,sympa,sympa) %dir %{home_s}
+%attr(755,sympa,sympa) %dir %{home_s}/bin
+%attr(  -,sympa,sympa) %{home_s}/bin/*.pl
+%attr(  -,sympa,sympa) %{home_s}/bin/create_db.*
 %attr(4755,sympa,sympa) %{home_s}/bin/queue
 %attr(4755,sympa,sympa) %{home_s}/bin/bouncequeue
 %attr(4755,sympa,sympa) %{home_s}/bin/*wrapper
 
-%{home_s}/nls/*.cat
+%attr(755,sympa,sympa) %dir %{home_s}/etc
+%attr(  -,sympa,sympa) %{home_s}/etc/*
+%attr(755,sympa,sympa) %dir %{home_s}/expl
+%attr(  -,sympa,sympa) %{home_s}/expl/*
 
+%attr(755,sympa,sympa) %dir %{home_s}/lib
+%attr(755,sympa,sympa) %dir %{home_s}/lib/Marc
+%attr(  -,sympa,sympa) %{home_s}/lib/Marc/*
+%attr(  -,sympa,sympa) %{home_s}/lib/*.pm
+%attr(  -,sympa,sympa) %{home_s}/lib/*.pl
+
+%attr(755,sympa,sympa) %dir %{home_s}/nls
+%attr(  -,sympa,sympa) %{home_s}/nls/*.cat
+%attr(755,sympa,sympa) %dir %{home_s}/sample
+%attr(  -,sympa,sympa) %{home_s}/sample/*
+
+%attr(755,sympa,sympa) %dir %{home_s}/sbin
+%attr(  -,sympa,sympa) %{home_s}/sbin/*.pl
+%attr(  -,sympa,sympa) %{home_s}/sbin/wwsympa.fcgi
+
+%attr(755,sympa,sympa) %dir %{home_s}/spool
+%attr(744,sympa,sympa) %dir %{home_s}/spool/*
+
+%dir /home/services/httpd/icons/sympa
+/home/services/httpd/icons/sympa/*
+
+%dir %{_sysconfdir}/sympa
 %attr(640,sympa,sympa) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/sympa/*.conf
 %attr(640,sympa,root)  %config(noreplace) %verify(not mtime md5 size) /etc/sysconfig/sympa
 %attr(754,root,root)  /etc/rc.d/init.d/sympa
 %{_mandir}/man[58]/*
-
-%clean
-rm -rf $RPM_BUILD_ROOT
