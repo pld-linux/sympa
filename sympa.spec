@@ -1,6 +1,6 @@
 %include	/usr/lib/rpm/macros.perl
-Summary:	Sympa is a powerful multilingual List Manager - LDAP and SQL features.
-Summary(fr):	Sympa est un gestionnaire de listes électroniques. 
+Summary:	Sympa is a powerful multilingual List Manager - LDAP and SQL features
+Summary(fr):	Sympa est un gestionnaire de listes électroniques
 Name:		sympa
 Version:	3.0.3
 Release:	2
@@ -59,7 +59,7 @@ rm -rf $RPM_BUILD_ROOT
 
 if [ -n "`getgid sympa`" ]; then
   if [ "`getgid sympa`" != "71" ]; then
-    echo "Warning:group sympa haven't gid=71. Corect this before install sympa" 1>&2
+    echo "Warning: group sympa haven't gid=71. Correct this before installing sympa" 1>&2
     exit 1
   fi
 else
@@ -67,7 +67,7 @@ else
 fi
 if [ -n "`id -u sympa 2>/dev/null`" ]; then
   if [ "`id -u sympa`" != "71" ]; then
-    echo "Warning:user sympa haven't uid=71. Corect this before install sympa" 1>&2
+    echo "Warning: user sympa haven't uid=71. Correct this before installing sympa" 1>&2
     exit 1
   fi
 else
