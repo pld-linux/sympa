@@ -30,9 +30,11 @@ Requires:	MHonArc 	   >= 2.4.5
 Requires:	perl-Digest-MD5
 Requires:	apache
 Requires:	openssl 	   >= 0.9.5a
-Prereq:		/usr/sbin/useradd
-Prereq:		/usr/sbin/groupadd
-Prereq:		/sbin/chkconfig
+Requires(pre):	/usr/bin/getgid
+Requires(pre):	/bin/id
+Requires(pre):	/usr/sbin/useradd
+Requires(pre):	/usr/sbin/groupadd
+Requires(post,preun):	/sbin/chkconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define home_s  /var/lib/sympa
@@ -73,7 +75,6 @@ aclocal
 
 %install
 rm -rf $RPM_BUILD_ROOT
-
 install -d $RPM_BUILD_ROOT/etc/sysconfig
 
 %{__make} \
@@ -94,24 +95,23 @@ install -d $RPM_BUILD_ROOT/etc/sysconfig
 
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/sympa
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/sympa
-gzip -9nf [ACKNR]*
 
 %pre
 if [ -n "`getgid sympa`" ]; then
-  if [ "`getgid sympa`" != "71" ]; then
-    echo "Warning: group sympa haven't gid=71. Correct this before installing sympa" 1>&2
-    exit 1
-  fi
+	if [ "`getgid sympa`" != "71" ]; then
+		echo "Error: group sympa doesn't have gid=71. Correct this before installing sympa." 1>&2
+		exit 1
+	fi
 else
-  /usr/sbin/groupadd -g 71 -r -f sympa
+	/usr/sbin/groupadd -g 71 -r -f sympa
 fi
 if [ -n "`id -u sympa 2>/dev/null`" ]; then
-  if [ "`id -u sympa`" != "71" ]; then
-    echo "Warning: user sympa haven't uid=71. Correct this before installing sympa" 1>&2
-    exit 1
-  fi
+	if [ "`id -u sympa`" != "71" ]; then
+		echo "Error: user sympa doesn't have uid=71. Correct this before installing sympa." 1>&2
+		exit 1
+	fi
 else
-  /usr/sbin/useradd -u 71 -r -d /home/sympa -s /bin/false -c "sympa" -g sympa sympa 1>&2
+	/usr/sbin/useradd -u 71 -r -d /home/sympa -s /bin/false -c "sympa" -g sympa sympa 1>&2
 fi
 
 # Setup log facility for Sympa
@@ -164,8 +164,8 @@ fi
 
 %postun
 if [ ! -d %{home_s} ]; then
-  /usr/sbin/userdel sympa
-  /usr/sbin/groupdel sympa
+	/usr/sbin/userdel sympa
+	/usr/sbin/groupdel sympa
 fi
 if [ "$1" = "0" -a -d /etc/smrsh ]; then
   if [ -L /etc/smrsh/queue ]; then
@@ -175,6 +175,8 @@ fi
 
 %files
 %defattr(0755,sympa,sympa)
+%doc [ACKNR]*
+
 %dir %{home_s}
 %dir %{home_s}/bin
 %dir %{home_s}/lib/Marc
@@ -188,6 +190,7 @@ fi
 %defattr(0744,sympa,sympa)
 %dir %{home_s}/spool/*
 
+# needs fixing - don't use defattr(-)!
 %defattr(-,sympa,sympa)
 %{home_s}/sample/*
 %{home_s}/lib/Marc/*
@@ -205,7 +208,6 @@ fi
 %{home_s}/sbin/*.pl
 %{home_s}/sbin/wwsympa.fcgi
 
-
 %attr(4755,sympa,sympa) %{home_s}/bin/queue
 %attr(4755,sympa,sympa) %{home_s}/bin/bouncequeue
 
@@ -215,9 +217,6 @@ fi
 %attr(640,root,root)  %config(noreplace) %verify(not mtime md5 size) /etc/sysconfig/sympa
 %attr(754,root,root)  /etc/rc.d/init.d/sympa
 %{_mandir}/man[58]/*
-
-%defattr(-,root,root)
-%doc *.gz
 
 %clean
 rm -rf $RPM_BUILD_ROOT
