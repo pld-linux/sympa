@@ -5,27 +5,27 @@ Name:		sympa
 Version:	3.0
 Release:	1
 License:	GPL
-Group:		System Environment/Daemons
-######		Unknown group!
+Group:		Aplications/Mail
+Group(pl):	Aplikacje/Poczta
 Source0:	http://listes.cru.fr/sympa/distribution/sympa-3.0.tar.gz
 URL:		http://listes.cru.fr/sympa/
 Patch0:		sympa-makefile.patch
-Requires:	perl >= 5.00403
-Requires:	perl-MailTools >= 1.14
+Requires:	perl 		   >= 5.6.0
+Requires:	perl-MailTools     >= 1.14
 Requires:	perl-MIME-Base64   >= 1.0
 Requires:	perl-IO-stringy    >= 1.0
-Requires:	perl-Msgcat        >= 1.03
+Requires:	perl-Locale-Msgcat >= 1.03
 Requires:	perl-MIME-tools    >= 5.209
-Requires:	perl-CGI.pm    >= 2.52
-Requires:	perl-DBI    >= 1.06
-Requires:	perl-DB_File    >= 1.0
-Requires:	perl-perl-ldap >= 0.10
+Requires:	perl-CGI-modules   >= 2.52
+Requires:	perl-DBI	   >= 1.06
+#Requires:	perl-DB_File       >= 1.0  # jest juz w perl-5.6.0
+Requires:	perl-ldap          >= 0.10
 ## Also requires a DBD for the DBMS 
 ## (perl-DBD-Pg or Perl- Msql-Mysql-modules)
-Requires:	perl-FCGI    >= 0.48
-Requires:	MHonArc >= 2.4.5
+Requires:	perl-FCGI          >= 0.48
+Requires:	MHonArc 	   >= 2.4.5
 Requires:	apache
-Requires:	openssl >= 0.9.5a
+Requires:	openssl 	   >= 0.9.5a
 Prereq:		/usr/sbin/useradd
 Prereq:		/usr/sbin/groupadd
 BuildRoot:	%{tmpdir}/sympa-3.0-root-%(id -u -n)
@@ -115,8 +115,8 @@ if [ -d /etc/smrsh ]; then
 fi
 
 %post
-/sbin/chkconfig -add sympa
-perl -pi -e "s|MYHOST|${HOSTNAME}|g" /etc/sympa.conf /etc/wwsympa.conf
+/sbin/chkconfig --add sympa
+perl -pi -e "s|MYHOST|${HOSTNAME}|g" /etc/sympa/sympa.conf /etc/sympa/wwsympa.conf
 
 %postun
 if [ ! -d /home/sympa ]; then
@@ -167,7 +167,7 @@ fi
 
 /home/sympa/nls/*.cat
 
-%defattr(0600,sympa,sympa)
+%defattr(0640,sympa,sympa)
 %config(noreplace) %{_sysconfdir}/sympa/sympa.conf
 %config(noreplace) %{_sysconfdir}/sympa/wwsympa.conf
 %defattr(0755,root,root)
