@@ -6,7 +6,7 @@ Summary(fr):	Sympa est un gestionnaire de listes électroniques
 Summary(pl):	Sympa - u¿yteczny, wielojêzyczny zarz±dca list z obs³ug± LDAP i SQL
 Name:		sympa
 Version:	3.4.4.3
-Release:	1
+Release:	2
 License:	GPL
 Group:		Applications/Mail
 Source0:	http://listes.cru.fr/sympa/distribution/%{name}-%{version}.tar.gz
@@ -28,6 +28,7 @@ Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
+Requires(pre):	/usr/sbin/usermod
 Requires(post,preun):	/sbin/chkconfig
 Requires(post):	fileutils
 Requires(post):	grep
@@ -156,6 +157,11 @@ if [ -n "`/bin/id -u sympa 2>/dev/null`" ]; then
 else
 	/usr/sbin/useradd -u 71 -d %{home_s} -s /bin/false \
 		-c "sympa" -g sympa sympa 1>&2
+fi
+
+%triggerun -- %{name} <= 3.4.4.3-1
+if [ `eval echo ~sympa` = /home/services/sympa ]; then
+	/usr/sbin/usermod -d %{home_s} sympa ||:
 fi
 
 %post
