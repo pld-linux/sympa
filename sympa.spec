@@ -3,7 +3,7 @@ Summary:	Sympa is a powerful multilingual List Manager - LDAP and SQL features
 Summary(fr):	Sympa est un gestionnaire de listes électroniques
 Summary(pl):	Sympa jest u¿ytecznym wielojêzycznym zarz±dc± list - obs³uguje LDAP i SQL
 Name:		sympa
-Version:	3.3.5
+Version:	3.4.4.1
 Release:	1
 License:	GPL
 Group:		Applications/Mail
