@@ -3,7 +3,7 @@ Summary:	Sympa is a powerful multilingual List Manager - LDAP and SQL features.
 Summary(fr):	Sympa est un gestionnaire de listes électroniques. 
 Name:		sympa
 Version:	3.0
-Release:	2
+Release:	1
 License:	GPL
 Group:		System Environment/Daemons
 ######		Unknown group!
@@ -55,29 +55,25 @@ rm -rf $RPM_BUILD_ROOT
 
 %{__make} INITDIR=/etc/rc.d/init.d HOST=MYHOST DIR=/home/sympa DESTDIR=$RPM_BUILD_ROOT install
 
-## Setting Runlevels
-for I in 0 1 2 6; do
-        install -d $RPM_BUILD_ROOT/etc/rc.d/rc$I.d
-        ln -s /etc/rc.d/init.d/sympa $RPM_BUILD_ROOT/etc/rc.d/rc$I.d/K25%{name}
-done
-for I in 3 5; do
-        install -d $RPM_BUILD_ROOT/etc/rc.d/rc$I.d
-        ln -s /etc/rc.d/init.d/sympa $RPM_BUILD_ROOT/etc/rc.d/rc$I.d/S95%{name}
-done
-
-#echo "See README and INSTALL in %{_prefix}/doc/sympa-3.0" > $RPM_BUILD_ROOT/home/sympa/README.first
-
 %pre
-# Try to add user and group 'sympa'
-home_s_pw=`cat /etc/passwd|grep "^sympa:" \
-           | sed -e "s=^sympa:[^:]*:[^:]*:[^:]*:[^:]*:\([^:]*\):.*=\1="`
-if [ "x${home_s_pw}" = "x" ]; then
-  /usr/sbin/groupadd -f sympa ||:
-  /usr/sbin/useradd -s /bin/false -d /home/sympa -m -g sympa -c "Sympa mailing list" sympa ||:
-elif [ "${home_s_pw}" != "/home/sympa" ]; then
-  echo "user sympa already exist with a home different from /home/sympa"
-  exit 0
+
+if [ -n "`getgid sympa`" ]; then
+  if [ "`getgid sympa`" != "71" ]; then
+    echo "Warning:group sympa haven't gid=71. Corect this before install sympa" 1>&2
+    exit 1
+  fi
+else
+  /usr/sbin/groupadd -g 71 -r -f sympa
 fi
+if [ -n "`id -u sympa 2>/dev/null`" ]; then
+  if [ "`id -u sympa`" != "71" ]; then
+    echo "Warning:user sympa haven't uid=71. Corect this before install sympa" 1>&2
+    exit 1
+  fi
+else
+  /usr/sbin/useradd -u 71 -r -d /home/sympa -s /bin/false -c "sympa" -g sympa sympa 1>&2
+fi
+
 
 # Setup log facility for Sympa
 if [ -f /etc/syslog.conf ] ;then
@@ -119,6 +115,7 @@ if [ -d /etc/smrsh ]; then
 fi
 
 %post
+/sbin/chkconfig -add sympa
 perl -pi -e "s|MYHOST|${HOSTNAME}|g" /etc/sympa.conf /etc/wwsympa.conf
 
 %postun
@@ -171,11 +168,10 @@ fi
 /home/sympa/nls/*.cat
 
 %defattr(0600,sympa,sympa)
-%config(noreplace) %{_sysconfdir}/sympa.conf
-%config(noreplace) %{_sysconfdir}/wwsympa.conf
+%config(noreplace) %{_sysconfdir}/sympa/sympa.conf
+%config(noreplace) %{_sysconfdir}/sympa/wwsympa.conf
 %defattr(0755,root,root)
 %config(noreplace) /etc/rc.d/init.d/sympa
-%config /etc/rc.d/rc*/*
 
 %defattr(-,root,root)
 %doc INSTALL LICENSE README RELEASE_NOTES
