@@ -1,7 +1,7 @@
 %include	/usr/lib/rpm/macros.perl
-Summary:	Sympa is a powerful multilingual List Manager - LDAP and SQL features
+Summary:	Sympa - a powerful multilingual List Manager with LDAP and SQL features
 Summary(fr):	Sympa est un gestionnaire de listes électroniques
-Summary(pl):	Sympa jest u¿ytecznym wielojêzycznym zarz±dc± list - obs³uguje LDAP i SQL
+Summary(pl):	Sympa - u¿yteczny, wielojêzyczny zarz±dca list z obs³ug± LDAP i SQL
 Name:		sympa
 Version:	3.4.4.1
 Release:	1
@@ -108,8 +108,8 @@ install -d $RPM_BUILD_ROOT/etc/sysconfig
 
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/sympa
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/sympa
-install %{SOURCE4} $RPM_BUILD_ROOT/%{_sysconfdir}/sympa/sympa.conf
-install %{SOURCE5} $RPM_BUILD_ROOT/%{_sysconfdir}/sympa/wwsympa.conf
+install %{SOURCE4} $RPM_BUILD_ROOT%{_sysconfdir}/sympa/sympa.conf
+install %{SOURCE5} $RPM_BUILD_ROOT%{_sysconfdir}/sympa/wwsympa.conf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
