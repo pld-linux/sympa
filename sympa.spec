@@ -3,12 +3,12 @@ Summary:	Sympa - a powerful multilingual List Manager with LDAP and SQL features
 Summary(fr):	Sympa est un gestionnaire de listes électroniques
 Summary(pl):	Sympa - u¿yteczny, wielojêzyczny zarz±dca list z obs³ug± LDAP i SQL
 Name:		sympa
-Version:	3.4.4.1
+Version:	3.4.4.3
 Release:	1
 License:	GPL
 Group:		Applications/Mail
 Source0:	http://listes.cru.fr/sympa/distribution/%{name}-%{version}.tar.gz
-# Source0-md5:	d8977492684948216ee76b95befb287f
+# Source0-md5:	60105b5041c61696815fc7ce4cb6f728
 Source1:	%{name}-pl-3.3.5-020515.tar.bz2
 # Source1-md5:	2a46fe55e877cc0a471507f8c93fbeab
 Source2:	%{name}.init
@@ -17,7 +17,6 @@ Source4:	%{name}.conf
 Source5:	%{name}-www.conf
 Patch0:		%{name}-Makefile.patch
 Patch1:		%{name}-wwslib-pl.patch
-Patch2:		%{name}-compare.patch
 URL:		http://listes.cru.fr/sympa/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -76,34 +75,53 @@ S/MIME.
 %setup -q -a1
 %patch0 -p1
 %patch1 -p1
-%patch2
 
 %build
 rm -f missing
 %{__aclocal}
 %{__autoconf}
 %{__automake}
-%configure
-%{__make} DIR=%{home_s} CONFIG=%{_sysconfdir}/sympa/sympa.conf sources languages
+%configure \
+	--with-confdir=%{_sysconfdir}/sympa \
+	--with-cgidir=%{home_s}/sbin \
+	--with-iconsdir=/home/services/httpd/icons/sympa \
+	--with-bindir=%{home_s}/bin \
+	--with-sbindir=%{home_s}/sbin \
+	--with-libexecdir=%{home_s}/bin \
+	--with-libdir=%{home_s}/lib \
+	--with-datadir=%{home_s}/etc \
+	--with-expldir=%{home_s}/expl \
+	--with-initdir=/etc/rc.d/init.d \
+	--with-piddir=/var/run \
+	--with-spooldir=/var/lib/sympa/spool \
+	--with-perl=%{_bindir}/perl \
+	--with-mhonarc=%{_bindir}/mhonarc \
+	--with-user=sympa \
+	--with-group=sympa \
+	--with-sendmail_aliases=/etc/mail/sympa_aliases \
+	--with-virtual_aliases=/etc/mail/sympa_virtual \
+	--with-newaliases=%{_bindir}/newaliases \
+	--with-postmap=%{_bindir}/postmap \
+	--with-mandir=%{_mandir} \
+	--with-nlsdir=/var/lib/sympa/nls \
+	--with-scriptdir=%{home_s}/bin \
+	--with-sampledir=/var/lib/sympa/sample \
+	--with-etcdir=%{_sysconfdir}/sympa
+	
+%{__make} sources nls \
+	DIR=%{home_s} \
+	CONFIG=%{_sysconfdir}/sympa/sympa.conf \
+	CVS2CL=%{_bindir}/cvs2cl.pl
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/sysconfig
 
+perl -pi -e 's#chown.*root#chown \$(USER)#g' src/Makefile
+
 %{__make} install \
-	INITDIR=/etc/rc.d/init.d \
-	HOST=MYHOST \
-	DIR=%{home_s} \
-	MANDIR=%{_mandir} \
-	ICONSDIR=/home/services/httpd/icons/sympa \
-	LIBDIR=%{home_s}/lib \
-	BINDIR=%{home_s}/bin \
-	CGIDIR=%{home_s}/sbin \
-	MAILERPROGDIR=%{home_s}/bin \
-	SBINDIR=%{home_s}/sbin \
-	EXPL_DIR=%{home_s}/expl \
-	ETCBINDIR=%{home_s}/etc \
-	CONFDIR=%{_sysconfdir}/sympa \
+	USER=$(id -u) \
+	GROUP=$(id -g) \
 	DESTDIR=$RPM_BUILD_ROOT
 
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/sympa
@@ -134,7 +152,7 @@ fi
 
 %post
 /sbin/chkconfig --add sympa
-perl -pi -e "s|MYHOST|${HOSTNAME}|g" /etc/sympa/sympa.conf /etc/sympa/wwsympa.conf
+/usr/bin/perl -pi -e "s|MYHOST|${HOSTNAME}|g" /etc/sympa/sympa.conf /etc/sympa/wwsympa.conf
 
 # Setup log facility for Sympa
 if [ -f /etc/syslog.conf ] ;then
@@ -194,8 +212,8 @@ if [ "$1" = "0" -a -d /etc/smrsh ]; then
 fi
 
 %files
-%attr(644,root,root,755)
-%doc [ACKNR]*
+%defattr(644,root,root,755)
+%doc [ACKNR]* doc/html
 
 # needs fixing - don't use attr(-)!
 %attr(755,sympa,sympa) %dir %{home_s}
@@ -209,7 +227,7 @@ fi
 %attr(755,sympa,sympa) %dir %{home_s}/etc
 %attr(  -,sympa,sympa) %{home_s}/etc/*
 %attr(755,sympa,sympa) %dir %{home_s}/expl
-%attr(  -,sympa,sympa) %{home_s}/expl/*
+#%attr(  -,sympa,sympa) %{home_s}/expl/*
 
 %attr(755,sympa,sympa) %dir %{home_s}/lib
 %attr(755,sympa,sympa) %dir %{home_s}/lib/Marc
@@ -218,7 +236,7 @@ fi
 %attr(  -,sympa,sympa) %{home_s}/lib/*.pl
 
 %attr(755,sympa,sympa) %dir %{home_s}/nls
-%attr(  -,sympa,sympa) %{home_s}/nls/*.cat
+%attr(  -,sympa,sympa) %{home_s}/nls/*.msg
 %attr(755,sympa,sympa) %dir %{home_s}/sample
 %attr(  -,sympa,sympa) %{home_s}/sample/*
 
