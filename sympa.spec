@@ -76,7 +76,7 @@ S/MIME.
 %setup -q -a1
 %patch0 -p1
 %patch1 -p1
-%patch2 
+%patch2
 
 %build
 rm -f missing
