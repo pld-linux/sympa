@@ -20,7 +20,7 @@ Requires:	perl-CGI-modules   >= 2.52
 Requires:	perl-DBI	   >= 1.06
 #Requires:	perl-DB_File       >= 1.0  # jest juz w perl-5.6.0
 Requires:	perl-ldap          >= 0.10
-## Also requires a DBD for the DBMS 
+## Also requires a DBD for the DBMS
 ## (perl-DBD-Pg or Perl- Msql-Mysql-modules)
 Requires:	perl-FCGI          >= 0.48
 Requires:	MHonArc 	   >= 2.4.5
@@ -45,12 +45,13 @@ Documentation is available under HTML and Latex (source) formats.
 
 %description -l pl
 Sympa jest skalowalnym i wysoko konfigurowalnym zarz±dc± pocztowych
-list dyskusyjnych. Radzi sobie z du¿ymi listami (100 000 subskrybentów)
-i przychodzi z pe³nym (u¿ytkownika i administratora) interfejsem WWW.
-Jest zlokalizowany, obs³uguje jêzyki us, fr, de, es, it, fi, zh. Jêzyk
-skryptowy pozwala na rozszerzanie komend. Sympa mo¿e obs³ugiwaæ
-katalog LDAP lub relacyjne bazy danych do tworzenia dynamicznych list.
-Obs³uguje autentykacjê i szyfrowanie oprarte o S/MIME.
+list dyskusyjnych. Radzi sobie z du¿ymi listami (100 000
+subskrybentów) i przychodzi z pe³nym (u¿ytkownika i administratora)
+interfejsem WWW. Jest zlokalizowany, obs³uguje jêzyki us, fr, de, es,
+it, fi, zh. Jêzyk skryptowy pozwala na rozszerzanie komend. Sympa mo¿e
+obs³ugiwaæ katalog LDAP lub relacyjne bazy danych do tworzenia
+dynamicznych list. Obs³uguje autentykacjê i szyfrowanie oprarte o
+S/MIME.
 
 %prep
 %setup -q
@@ -91,7 +92,7 @@ if [ -f /etc/syslog.conf ] ;then
     if [ ${cntlog} -le 9 ];then
       echo "# added by sympa-3.0 rpm $(date)" >> /etc/syslog.conf
       echo "local${cntlog}.*       /var/log/sympa" >> /etc/syslog.conf
-    fi    
+    fi
   fi
 fi
 
@@ -110,9 +111,9 @@ for a_file in /etc/aliases /etc/postfix/aliases; do
       echo "# sympa-owner:listmaster@${HOSTNAME}" >> ${a_file}
       echo "" >> ${a_file}
 #     /usr/bin/newaliases
-    fi  
+    fi
   fi
-done  
+done
 
 # eventually, add queue to sendmail security shell
 if [ -d /etc/smrsh ]; then
@@ -133,7 +134,7 @@ fi
 %postun
 if [ ! -d /home/sympa ]; then
   /usr/sbin/userdel sympa
-  /usr/sbin/groupdel sympa  
+  /usr/sbin/groupdel sympa
 fi
 if [ "$1" = "0" -a -d /etc/smrsh ]; then
   if [ -L /etc/smrsh/queue ]; then
