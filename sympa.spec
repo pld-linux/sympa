@@ -66,8 +66,8 @@ S/MIME.
 %build
 
 aclocal
-autoconf
-automake -a -c -f
+%{__autoconf}
+%{__automake}
 %configure
 %{__make} DIR=%{home_s} CONFIG=%{_sysconfdir}/sympa/sympa.conf sources languages
 
