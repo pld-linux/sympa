@@ -1,4 +1,4 @@
-
+%include	/usr/lib/rpm/macros.perl
 Summary:	Sympa is a powerful multilingual List Manager - LDAP and SQL features.
 Summary(fr):	Sympa est un gestionnaire de listes électroniques. 
 Name:		sympa
