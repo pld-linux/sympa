@@ -74,7 +74,7 @@ S/MIME.
 %patch2 
 
 %build
-aclocal
+%{__aclocal}
 %{__autoconf}
 %{__automake}
 %configure
