@@ -24,6 +24,7 @@ Requires:	perl-ldap          >= 0.10
 ## (perl-DBD-Pg or Perl- Msql-Mysql-modules)
 Requires:	perl-FCGI          >= 0.48
 Requires:	MHonArc 	   >= 2.4.5
+Requires:	perl-Digest-MD5
 Requires:	apache
 Requires:	openssl 	   >= 0.9.5a
 Prereq:		/usr/sbin/useradd
