@@ -1,0 +1,12 @@
+diff -Nur sympa-3.3.4b.5.org/wwsympa/wwslib.pm sympa-3.3.4b.5/wwsympa/wwslib.pm
+--- sympa-3.3.4b.5.org/wwsympa/wwslib.pm	Thu Mar 28 15:55:45 2002
++++ sympa-3.3.4b.5/wwsympa/wwslib.pm	Sun Apr 28 17:22:43 2002
+@@ -27,7 +27,7 @@
+ @EXPORT = ();
+ 
+ ## Supported web languages
+-@languages = ('fr','us','es','it','cn','cz','de','hu');
++@languages = ('fr','us','es','it','cn','cz','de','hu','pl');
+ 
+ %reception_mode = ('mail' => 'normal',
+ 		   'digest' => 'digest',
