@@ -4,13 +4,15 @@ Summary(fr):	Sympa est un gestionnaire de listes électroniques
 Summary(pl):	Sympa jest u¿ytecznym wielojêzycznym zarz±dc± list - obs³uguje LDAP i SQL
 Name:		sympa
 Version:	3.3.5
-Release:	0.4
+Release:	0.9
 License:	GPL
 Group:		Applications/Mail
 Source0:	http://listes.cru.fr/sympa/distribution/%{name}-%{version}.tar.gz
 Source1:	%{name}-pl-3.3.5-020515.tar.bz2
 Source2:	%{name}.init
 Source3:	%{name}.sysconfig
+Source4:	%{name}.conf
+Source5:	%{name}-www.conf
 URL:		http://listes.cru.fr/sympa/
 Patch0:		%{name}-Makefile.patch
 Patch1:		sympa-wwslib-pl.patch
@@ -93,12 +95,14 @@ install -d $RPM_BUILD_ROOT/etc/sysconfig
 	MAILERPROGDIR=%{home_s}/bin \
 	SBINDIR=%{home_s}/sbin \
 	EXPL_DIR=%{home_s}/expl \
-	ETCBINDIR=%{home_s}/bin/etc \
+	ETCBINDIR=%{home_s}/etc \
 	CONFDIR=%{_sysconfdir}/sympa \
 	DESTDIR=$RPM_BUILD_ROOT install
 
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/sympa
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/sympa
+install %{SOURCE4} $RPM_BUILD_ROOT/%{_sysconfdir}/sympa/sympa.conf
+install %{SOURCE5} $RPM_BUILD_ROOT/%{_sysconfdir}/sympa/wwsympa.conf
 
 %pre
 if [ -n "`getgid sympa`" ]; then
@@ -132,7 +136,7 @@ if [ -f /etc/syslog.conf ] ;then
 fi
 
 # try to add some sample entries in /etc/aliases for sympa
-for a_file in /etc/aliases /etc/postfix/aliases; do
+for a_file in /etc/aliases /etc/postfix/aliases /etc/mail/sympa.aliases; do
   if [ -f ${a_file} ]; then
     if [ `grep -c sympa ${a_file}` -eq 0 ]; then
       cp -f ${a_file} ${a_file}.rpmorig
@@ -184,7 +188,6 @@ fi
 %dir %{home_s}
 %dir %{home_s}/bin
 %dir %{home_s}/lib/Marc
-%dir %{home_s}/bin/etc
 %dir %{home_s}/sample
 %dir %{home_s}/expl
 %dir %{home_s}/spool
@@ -198,7 +201,7 @@ fi
 %defattr(-,sympa,sympa)
 %{home_s}/sample/*
 %{home_s}/lib/Marc/*
-%{home_s}/bin/etc/*
+%{home_s}/etc/*
 %{home_s}/expl/*
 
 %attr(0755,root,root)%dir /home/httpd/icons/sympa
@@ -218,8 +221,8 @@ fi
 
 %{home_s}/nls/*.cat
 
-%attr(640,root,sympa) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/sympa/*.conf
-%attr(640,root,root)  %config(noreplace) %verify(not mtime md5 size) /etc/sysconfig/sympa
+%attr(640,sympa,sympa) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/sympa/*.conf
+%attr(640,sympa,root)  %config(noreplace) %verify(not mtime md5 size) /etc/sysconfig/sympa
 %attr(754,root,root)  /etc/rc.d/init.d/sympa
 %{_mandir}/man[58]/*
 
