@@ -90,7 +90,7 @@ install -d $RPM_BUILD_ROOT/etc/sysconfig
 	HOST=MYHOST \
 	DIR=%{home_s} \
 	MANDIR=%{_mandir} \
-	ICONSDIR=/home/httpd/icons/sympa \
+	ICONSDIR=/home/services/httpd/icons/sympa \
 	LIBDIR=%{home_s}/lib \
 	BINDIR=%{home_s}/bin \
 	CGIDIR=%{home_s}/sbin \
@@ -121,7 +121,7 @@ if [ -n "`id -u sympa 2>/dev/null`" ]; then
 		exit 1
 	fi
 else
-	/usr/sbin/useradd -u 71 -r -d /home/sympa -s /bin/false -c "sympa" -g sympa sympa 1>&2
+	/usr/sbin/useradd -u 71 -r -d /home/services/sympa -s /bin/false -c "sympa" -g sympa sympa 1>&2
 fi
 
 # Setup log facility for Sympa
@@ -147,7 +147,7 @@ for a_file in /etc/aliases /etc/postfix/aliases /etc/mail/sympa.aliases; do
       if [ `grep -c listmaster ${a_file}` -eq 0 ]; then
         echo "# listmaster:root" >> ${a_file}
       fi
-      echo "# sympa:\"|/home/sympa/bin/queue 0 sympa\"" >> ${a_file}
+      echo "# sympa:\"|/home/services/sympa/bin/queue 0 sympa\"" >> ${a_file}
       echo "# sympa-request:listmaster@${HOSTNAME}" >> ${a_file}
       echo "# sympa-owner:listmaster@${HOSTNAME}" >> ${a_file}
       echo "" >> ${a_file}
@@ -206,8 +206,8 @@ fi
 %{home_s}/etc/*
 %{home_s}/expl/*
 
-%attr(0755,root,root)%dir /home/httpd/icons/sympa
-%attr(0644,root,root) /home/httpd/icons/sympa/*
+%attr(0755,root,root)%dir /home/services/httpd/icons/sympa
+%attr(0644,root,root) /home/services/httpd/icons/sympa/*
 
 %defattr(-,sympa,sympa)
 %{home_s}/bin/*.pl
