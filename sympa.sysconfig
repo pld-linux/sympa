@@ -1,0 +1,8 @@
+# Customized setings for sympa
+SYMPA_DIR="/var/lib/sympa/sbin"
+SYMPA_sympa_OPT=""
+SYMPA_bounced_OPT=""
+SYMPA_archived_OPT=""
+
+# Define nice level for sympa
+SERVICE_RUN_NICE_LEVEL="+0"
