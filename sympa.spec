@@ -196,7 +196,7 @@ for a_file in /etc/aliases /etc/postfix/aliases /etc/mail/sympa.aliases; do
 			if [ `grep -c listmaster ${a_file}` -eq 0 ]; then
 				echo "# listmaster:root" >> ${a_file}
 			fi
-			echo "# sympa:\"|/home/services/sympa/bin/queue 0 sympa\"" >> ${a_file}
+			echo "# sympa:\"|%{home_s}/bin/queue 0 sympa\"" >> ${a_file}
 			echo "# sympa-request:listmaster@${HOSTNAME}" >> ${a_file}
 			echo "# sympa-owner:listmaster@${HOSTNAME}" >> ${a_file}
 			echo "" >> ${a_file}
