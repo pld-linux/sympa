@@ -9,6 +9,7 @@ Group:		System Environment/Daemons
 ######		Unknown group!
 Source0:	http://listes.cru.fr/sympa/distribution/sympa-3.0.tar.gz
 URL:		http://listes.cru.fr/sympa/
+Patch0:		sympa-makefile.patch
 Requires:	perl >= 5.00403
 Requires:	perl-MailTools >= 1.14
 Requires:	perl-MIME-Base64   >= 1.0
@@ -42,9 +43,8 @@ Documentation is available under HTML and Latex (source) formats.
 
 
 %prep
-rm -rf $RPM_BUILD_ROOT
-
 %setup -q
+%patch0 -p1
 
 %build
 
