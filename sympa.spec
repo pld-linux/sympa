@@ -44,7 +44,7 @@ Requires:	perl-CGI	   >= 2.85
 ## (perl-DBD-Pg or Perl- Msql-Mysql-modules)
 Requires:	perl-FCGI          >= 0.48
 Requires:	perl-Digest-MD5
-Requires:	openssl 	   >= 0.9.5a
+Requires:	openssl 	   >= 0.9.7
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define home_s  /var/lib/sympa
