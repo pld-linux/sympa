@@ -1,3 +1,5 @@
+# TODO:
+# - SECURITY: http://securitytracker.com/alerts/2004/Aug/1011016.html
 %include	/usr/lib/rpm/macros.perl
 Summary:	Sympa - a powerful multilingual List Manager with LDAP and SQL features
 Summary(fr):	Sympa est un gestionnaire de listes électroniques
