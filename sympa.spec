@@ -4,7 +4,7 @@ Summary(fr):	Sympa est un gestionnaire de listes électroniques
 Summary(pl):	Sympa jest u¿ytecznym wielojêzycznym zarz±dc± list - obs³uguje LDAP i SQL
 Name:		sympa
 Version:	3.3.4b.5
-Release:	1
+Release:	1.1
 License:	GPL
 Group:		Applications/Mail
 Source0:	http://listes.cru.fr/sympa/distribution/%{name}-%{version}.tar.gz
@@ -65,12 +65,10 @@ aclocal
 autoconf
 automake -a -c -f
 %configure
-%{__make} DIR=%{home_s} sources languages
+%{__make} DIR=%{home_s} CONFIG=%{_sysconfdir}/sympa/sympa.conf sources languages
 
 %install
 rm -rf $RPM_BUILD_ROOT
-
-#%{__make} INITDIR=/etc/rc.d/init.d HOST=MYHOST DIR=/home/sympa DESTDIR=$RPM_BUILD_ROOT install
 
 %{__make} \
 	INITDIR=/etc/rc.d/init.d \
