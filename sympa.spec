@@ -1,12 +1,14 @@
 # TODO:
 # - SECURITY: http://securitytracker.com/alerts/2004/Aug/1011016.html
+# - COMPATIBILITY: check if works with webserver != apache and update R:
+# - resolve problem with apache1 or apache2 icons directory...
 %include	/usr/lib/rpm/macros.perl
 Summary:	Sympa - a powerful multilingual List Manager with LDAP and SQL features
 Summary(fr):	Sympa est un gestionnaire de listes électroniques
 Summary(pl):	Sympa - u¿yteczny, wielojêzyczny zarz±dca list z obs³ug± LDAP i SQL
 Name:		sympa
 Version:	3.4.4.3
-Release:	2
+Release:	3
 License:	GPL
 Group:		Applications/Mail
 Source0:	http://listes.cru.fr/sympa/distribution/%{name}-%{version}.tar.gz
@@ -19,6 +21,7 @@ Source4:	%{name}.conf
 Source5:	%{name}-www.conf
 Patch0:		%{name}-Makefile.patch
 Patch1:		%{name}-wwslib-pl.patch
+Patch2:		%{name}-wwsympa.fcgi-editsubsciber.fix.patch
 URL:		http://listes.cru.fr/sympa/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -35,7 +38,7 @@ Requires(post):	grep
 Requires(postun):	/usr/sbin/groupdel
 Requires(postun):	/usr/sbin/userdel
 Requires:	MHonArc >= 2.4.5
-Requires:	apache
+Requires:	webserver = apache
 Requires:	perl-MailTools >= 1.14
 Requires:	perl-MIME-Base64 >= 1.0
 Requires:	perl-IO-stringy >= 1.0
@@ -82,6 +85,7 @@ S/MIME.
 %setup -q -a1
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 rm -f missing
