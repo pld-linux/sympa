@@ -268,7 +268,7 @@ fi
 /home/services/httpd/icons/sympa/*
 
 %dir %{_sysconfdir}/sympa
-%attr(640,sympa,sympa) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/sympa/*.conf
-%attr(640,sympa,root) %config(noreplace) %verify(not mtime md5 size) /etc/sysconfig/sympa
+%attr(640,sympa,sympa) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sympa/*.conf
+%attr(640,sympa,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/sympa
 %attr(754,root,root) /etc/rc.d/init.d/sympa
 %{_mandir}/man[58]/*
