@@ -57,24 +57,8 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} INITDIR=/etc/rc.d/init.d HOST=MYHOST DIR=/home/sympa DESTDIR=$RPM_BUILD_ROOT install
 
 %pre
-
-if [ -n "`getgid sympa`" ]; then
-  if [ "`getgid sympa`" != "71" ]; then
-    echo "Warning: group sympa haven't gid=71. Correct this before installing sympa" 1>&2
-    exit 1
-  fi
-else
-  /usr/sbin/groupadd -g 71 -r -f sympa
-fi
-if [ -n "`id -u sympa 2>/dev/null`" ]; then
-  if [ "`id -u sympa`" != "71" ]; then
-    echo "Warning: user sympa haven't uid=71. Correct this before installing sympa" 1>&2
-    exit 1
-  fi
-else
-  /usr/sbin/useradd -u 71 -r -d /home/sympa -s /bin/false -c "sympa" -g sympa sympa 1>&2
-fi
-
+GID=71; %groupadd
+UID=71; HOMEDIR=/home/sympa; COMMENT=sympa; %useradd
 
 # Setup log facility for Sympa
 if [ -f /etc/syslog.conf ] ;then
@@ -116,20 +100,22 @@ if [ -d /etc/smrsh ]; then
 fi
 
 %post
-/sbin/chkconfig --add sympa
+%chkconfig_add
 perl -pi -e "s|MYHOST|${HOSTNAME}|g" /etc/sympa/sympa.conf /etc/sympa/wwsympa.conf
+
+%preun
+%chkconfig_del
 
 %postun
 if [ ! -d /home/sympa ]; then
-  /usr/sbin/userdel sympa
-  /usr/sbin/groupdel sympa  
+%userdel
+%groupdel
 fi
 if [ $1 = 0 -a -d /etc/smrsh ]; then
   if [ -L /etc/smrsh/queue ]; then
     rm -f /etc/smrsh/queue
   fi
 fi
-
 
 %files
 %defattr(644,root,root,755)
