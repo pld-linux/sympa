@@ -4,7 +4,7 @@ Summary(fr):	Sympa est un gestionnaire de listes électroniques
 Summary(pl):	Sympa jest u¿ytecznym wielojêzycznym zarz±dc± list - obs³uguje LDAP i SQL
 Name:		sympa
 Version:	3.3.5
-Release:	0.10
+Release:	1.0
 License:	GPL
 Group:		Applications/Mail
 Source0:	http://listes.cru.fr/sympa/distribution/%{name}-%{version}.tar.gz
@@ -74,6 +74,7 @@ S/MIME.
 %patch2 
 
 %build
+rm -f missing
 %{__aclocal}
 %{__autoconf}
 %{__automake}
