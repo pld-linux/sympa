@@ -1,9 +1,10 @@
 %include	/usr/lib/rpm/macros.perl
 Summary:	Sympa is a powerful multilingual List Manager - LDAP and SQL features
 Summary(fr):	Sympa est un gestionnaire de listes électroniques
+Summary(pl):	Sympa jest u¿ytecznym wielojêzycznym zarz±dc± list - obs³uguje LDAP i SQL
 Name:		sympa
 Version:	3.0.3
-Release:	2
+Release:	3
 License:	GPL
 Group:		Applications/Mail
 Group(de):	Applikationen/Post
@@ -31,6 +32,7 @@ Requires:	apache
 Requires:	openssl 	   >= 0.9.5a
 Prereq:		/usr/sbin/useradd
 Prereq:		/usr/sbin/groupadd
+Prereq:		/sbin/chkconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -44,13 +46,20 @@ provides S/MIME-based authentication and encryption.
 
 Documentation is available under HTML and Latex (source) formats.
 
+%description -l pl
+Sympa jest skalowalnym i wysoko konfigurowalnym zarz±dc± pocztowych
+list dyskusyjnych. Radzi sobie z du¿ymi listami (100 000 subskrybentów)
+i przychodzi z pe³nym (u¿ytkownika i administratora) interfejsem WWW.
+Jest zlokalizowany, obs³uguje jêzyki us, fr, de, es, it, fi, zh. Jêzyk
+skryptowy pozwala na rozszerzanie komend. Sympa mo¿e obs³ugiwaæ
+katalog LDAP lub relacyjne bazy danych do tworzenia dynamicznych list.
+Obs³uguje autentykacjê i szyfrowanie oprarte o S/MIME.
 
 %prep
 %setup -q
 %patch0 -p1
 
 %build
-
 %{__make} DIR=/home/sympa sources languages
 
 %install
@@ -59,7 +68,6 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} INITDIR=/etc/rc.d/init.d HOST=MYHOST DIR=/home/sympa DESTDIR=$RPM_BUILD_ROOT install
 
 %pre
-
 if [ -n "`getgid sympa`" ]; then
   if [ "`getgid sympa`" != "71" ]; then
     echo "Warning: group sympa haven't gid=71. Correct this before installing sympa" 1>&2
@@ -76,7 +84,6 @@ if [ -n "`id -u sympa 2>/dev/null`" ]; then
 else
   /usr/sbin/useradd -u 71 -r -d /home/sympa -s /bin/false -c "sympa" -g sympa sympa 1>&2
 fi
-
 
 # Setup log facility for Sympa
 if [ -f /etc/syslog.conf ] ;then
@@ -121,17 +128,21 @@ fi
 /sbin/chkconfig --add sympa
 perl -pi -e "s|MYHOST|${HOSTNAME}|g" /etc/sympa/sympa.conf /etc/sympa/wwsympa.conf
 
+%preun
+if [ "$1" = "0" ]; then
+	/sbin/chkconfig --del sympa
+fi
+
 %postun
 if [ ! -d /home/sympa ]; then
   /usr/sbin/userdel sympa
   /usr/sbin/groupdel sympa  
 fi
-if [ $1 = 0 -a -d /etc/smrsh ]; then
+if [ "$1" = "0" -a -d /etc/smrsh ]; then
   if [ -L /etc/smrsh/queue ]; then
     rm -f /etc/smrsh/queue
   fi
 fi
-
 
 %files
 %defattr(644,root,root,755)
