@@ -3,13 +3,13 @@ Summary:	Sympa is a powerful multilingual List Manager - LDAP and SQL features
 Summary(fr):	Sympa est un gestionnaire de listes électroniques
 Summary(pl):	Sympa jest u¿ytecznym wielojêzycznym zarz±dc± list - obs³uguje LDAP i SQL
 Name:		sympa
-Version:	3.0.3
-Release:	3
+Version:	3.3.4b.5
+Release:	1
 License:	GPL
 Group:		Applications/Mail
 Source0:	http://listes.cru.fr/sympa/distribution/%{name}-%{version}.tar.gz
 URL:		http://listes.cru.fr/sympa/
-Patch0:		%{name}-makefile.patch
+Patch0:		%{name}-Makefile.patch
 Requires:	perl 		   >= 5.6.0
 Requires:	perl-MailTools     >= 1.14
 Requires:	perl-MIME-Base64   >= 1.0
@@ -31,6 +31,8 @@ Prereq:		/usr/sbin/useradd
 Prereq:		/usr/sbin/groupadd
 Prereq:		/sbin/chkconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+%define home_s  /var/lib/sympa
 
 %description
 Sympa is scalable and highly customizable mailing list manager. It can
@@ -58,12 +60,34 @@ S/MIME.
 %patch0 -p1
 
 %build
-%{__make} DIR=/home/sympa sources languages
+
+aclocal
+autoconf
+automake -a -c -f
+%configure
+%{__make} DIR=%{home_s} sources languages
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%{__make} INITDIR=/etc/rc.d/init.d HOST=MYHOST DIR=/home/sympa DESTDIR=$RPM_BUILD_ROOT install
+#%{__make} INITDIR=/etc/rc.d/init.d HOST=MYHOST DIR=/home/sympa DESTDIR=$RPM_BUILD_ROOT install
+
+%{__make} \
+	INITDIR=/etc/rc.d/init.d \
+	HOST=MYHOST \
+	DIR=%{home_s} \
+	MANDIR=%{_mandir} \
+	LIBDIR=%{home_s}/lib \
+	BINDIR=%{home_s}/bin \
+	CGIDIR=%{home_s}/sbin \
+	MAILERPROGDIR=%{home_s}/bin \
+	SBINDIR=%{home_s}/sbin \
+	EXPL_DIR=%{home_s}/expl \
+	ETCBINDIR=%{home_s}/bin/etc \
+	CONFDIR=%{_sysconfdir}/sympa \
+	DESTDIR=$RPM_BUILD_ROOT install
+
+gzip -9nf [ACKNR]*
 
 %pre
 if [ -n "`getgid sympa`" ]; then
@@ -118,7 +142,7 @@ done
 # eventually, add queue to sendmail security shell
 if [ -d /etc/smrsh ]; then
   if [ ! -e /etc/smrsh/queue ]; then
-    ln -s /home/sympa/bin/queue /etc/smrsh/queue
+    ln -s %{home_s}/bin/queue /etc/smrsh/queue
   fi
 fi
 
@@ -132,7 +156,7 @@ if [ "$1" = "0" ]; then
 fi
 
 %postun
-if [ ! -d /home/sympa ]; then
+if [ ! -d %{home_s} ]; then
   /usr/sbin/userdel sympa
   /usr/sbin/groupdel sympa
 fi
@@ -146,48 +170,51 @@ fi
 %defattr(644,root,root,755)
 
 %defattr(0755,sympa,sympa)
-%dir /home/sympa
-%dir /home/sympa/bin
-%dir /home/sympa/bin/Marc
-%dir /home/sympa/bin%{_sysconfdir}
-%dir /home/sympa/sample
-%dir /home/sympa/expl
-%dir /home/sympa/spool
-%dir /home/sympa/nls
-%dir /home/sympa%{_sysconfdir}
+%dir %{home_s}
+%dir %{home_s}/bin
+%dir %{home_s}/lib/Marc
+%dir %{home_s}/bin%{_sysconfdir}
+%dir %{home_s}/sample
+%dir %{home_s}/expl
+%dir %{home_s}/spool
+%dir %{home_s}/nls
+%dir %{home_s}%{_sysconfdir}
 
 %defattr(0744,sympa,sympa)
-%dir /home/sympa/spool/*
+%dir %{home_s}/spool/*
 
 %defattr(-,sympa,sympa)
-/home/sympa/sample/*
-/home/sympa/bin/Marc/*
-/home/sympa/bin%{_sysconfdir}/*
-/home/sympa/expl/*
+%{home_s}/sample/*
+%{home_s}/lib/Marc/*
+%{home_s}/bin/etc/*
+%{home_s}/expl/*
 
 %attr(0755,root,root)%dir /home/httpd/icons
 %attr(0644,root,root) /home/httpd/icons/*
 
 %defattr(-,sympa,sympa)
-/home/sympa/bin/*.pm
-/home/sympa/bin/*.pl
-/home/sympa/bin/create_db.*
-/home/sympa/bin/wwsympa.fcgi
+%{home_s}/bin/*.pl
+%{home_s}/lib/*.pm
+%{home_s}/lib/*.pl
+%{home_s}/bin/create_db.*
+%{home_s}/sbin/*.pl
+%{home_s}/sbin/wwsympa.fcgi
 
-%attr(4755,sympa,sympa) /home/sympa/bin/queue
-%attr(4755,sympa,sympa) /home/sympa/bin/bouncequeue
 
-/home/sympa/nls/*.cat
+%attr(4755,sympa,sympa) %{home_s}/bin/queue
+%attr(4755,sympa,sympa) %{home_s}/bin/bouncequeue
+
+%{home_s}/nls/*.cat
 
 %defattr(0640,sympa,sympa)
 %config(noreplace) %{_sysconfdir}/sympa/sympa.conf
 %config(noreplace) %{_sysconfdir}/sympa/wwsympa.conf
 %defattr(0755,root,root)
 %config(noreplace) /etc/rc.d/init.d/sympa
+%{_mandir}/man[58]/*
 
 %defattr(-,root,root)
-%doc INSTALL LICENSE README RELEASE_NOTES
-%doc doc/*
+%doc *.gz
 
 %clean
 rm -rf $RPM_BUILD_ROOT
