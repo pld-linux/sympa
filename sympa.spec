@@ -3,12 +3,12 @@ Summary:	Sympa is a powerful multilingual List Manager - LDAP and SQL features
 Summary(fr):	Sympa est un gestionnaire de listes électroniques
 Summary(pl):	Sympa jest u¿ytecznym wielojêzycznym zarz±dc± list - obs³uguje LDAP i SQL
 Name:		sympa
-Version:	3.3.4b.5
-Release:	1.6
+Version:	3.3.5
+Release:	0.1
 License:	GPL
 Group:		Applications/Mail
 Source0:	http://listes.cru.fr/sympa/distribution/%{name}-%{version}.tar.gz
-Source1:	%{name}-wws_templates-pl.tar.gz
+Source1:	%{name}-pl-3.3.5-020515.tar.bz2
 Source2:	%{name}.init
 Source3:	%{name}.sysconfig
 URL:		http://listes.cru.fr/sympa/
@@ -22,7 +22,6 @@ Requires:	perl-Locale-Msgcat >= 1.03
 Requires:	perl-MIME-tools    >= 5.209
 Requires:	perl-CGI-modules   >= 2.52
 Requires:	perl-DBI	   >= 1.06
-#Requires:	perl-DB_File       >= 1.0  # jest juz w perl-5.6.0
 Requires:	perl-ldap          >= 0.10
 ## Also requires a DBD for the DBMS
 ## (perl-DBD-Pg or Perl- Msql-Mysql-modules)
@@ -82,6 +81,7 @@ install -d $RPM_BUILD_ROOT/etc/sysconfig
 	HOST=MYHOST \
 	DIR=%{home_s} \
 	MANDIR=%{_mandir} \
+	ICONSDIR=/home/httpd/icons/sympa \
 	LIBDIR=%{home_s}/lib \
 	BINDIR=%{home_s}/bin \
 	CGIDIR=%{home_s}/sbin \
@@ -194,8 +194,8 @@ fi
 %{home_s}/bin/etc/*
 %{home_s}/expl/*
 
-%attr(0755,root,root)%dir /home/httpd/icons
-%attr(0644,root,root) /home/httpd/icons/*
+%attr(0755,root,root)%dir /home/httpd/icons/sympa
+%attr(0644,root,root) /home/httpd/icons/sympa/*
 
 %defattr(-,sympa,sympa)
 %{home_s}/bin/*.pl
