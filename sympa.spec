@@ -36,7 +36,6 @@ Requires(postun):	/usr/sbin/groupdel
 Requires(postun):	/usr/sbin/userdel
 Requires:	MHonArc >= 2.4.5
 Requires:	apache
-Requires:	perl >= 5.6.0
 Requires:	perl-MailTools >= 1.14
 Requires:	perl-MIME-Base64 >= 1.0
 Requires:	perl-IO-stringy >= 1.0
@@ -102,7 +101,7 @@ rm -f missing
 	--with-initdir=/etc/rc.d/init.d \
 	--with-piddir=/var/run \
 	--with-spooldir=/var/lib/sympa/spool \
-	--with-perl=%{_bindir}/perl \
+	--with-perl=%{__perl} \
 	--with-mhonarc=%{_bindir}/mhonarc \
 	--with-user=sympa \
 	--with-group=sympa \
@@ -166,10 +165,10 @@ fi
 
 %post
 /sbin/chkconfig --add sympa
-/usr/bin/perl -pi -e "s|MYHOST|${HOSTNAME}|g" /etc/sympa/sympa.conf /etc/sympa/wwsympa.conf
+%{__perl} -pi -e "s|MYHOST|${HOSTNAME}|g" /etc/sympa/sympa.conf /etc/sympa/wwsympa.conf
 
 # Setup log facility for Sympa
-if [ -f /etc/syslog.conf ] ;then
+if [ -f /etc/syslog.conf ]; then
 	if [ `grep -c sympa /etc/syslog.conf` -eq 0 ] ;then
 		typeset -i cntlog
 		cntlog=0
