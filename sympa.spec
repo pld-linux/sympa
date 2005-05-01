@@ -25,7 +25,7 @@ Patch2:		%{name}-wwsympa.fcgi-editsubsciber.fix.patch
 URL:		http://listes.cru.fr/sympa/
 BuildRequires:	autoconf
 BuildRequires:	automake
-BuildRequires:	rpmbuild(macros) >= 1.159
+BuildRequires:	rpmbuild(macros) >= 1.202
 PreReq:		rc-scripts
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
@@ -144,23 +144,8 @@ install %{SOURCE5} $RPM_BUILD_ROOT%{_sysconfdir}/sympa/wwsympa.conf
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-if [ -n "`/usr/bin/getgid sympa`" ]; then
-	if [ "`/usr/bin/getgid sympa`" != "71" ]; then
-		echo "Error: group sympa doesn't have gid=71. Correct this before installing sympa." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/groupadd -g 71 sympa 1>&2
-fi
-if [ -n "`/bin/id -u sympa 2>/dev/null`" ]; then
-	if [ "`/bin/id -u sympa`" != "71" ]; then
-		echo "Error: user sympa doesn't have uid=71. Correct this before installing sympa." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/useradd -u 71 -d %{home_s} -s /bin/false \
-		-c "sympa" -g sympa sympa 1>&2
-fi
+%groupadd -g 71 sympa
+%useradd -u 71 -d %{home_s} -s /bin/false -c "sympa" -g sympa sympa
 
 %triggerun -- %{name} <= 3.4.4.3-1
 if [ `eval echo ~sympa` = /home/services/sympa ]; then
