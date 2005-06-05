@@ -25,6 +25,7 @@ Patch2:		%{name}-wwsympa.fcgi-editsubsciber.fix.patch
 URL:		http://listes.cru.fr/sympa/
 BuildRequires:	autoconf
 BuildRequires:	automake
+BuildRequires:	rpm-perlprov
 BuildRequires:	rpmbuild(macros) >= 1.202
 PreReq:		rc-scripts
 Requires(pre):	/bin/id
