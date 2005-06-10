@@ -11,7 +11,7 @@ Version:	3.4.4.3
 Release:	3
 License:	GPL
 Group:		Applications/Mail
-Source0:	http://listes.cru.fr/sympa/distribution/%{name}-%{version}.tar.gz
+Source0:	http://www.sympa.org/distribution/%{name}-%{version}.tar.gz
 # Source0-md5:	60105b5041c61696815fc7ce4cb6f728
 Source1:	%{name}-pl-3.3.5-020515.tar.bz2
 # Source1-md5:	2a46fe55e877cc0a471507f8c93fbeab
@@ -22,7 +22,7 @@ Source5:	%{name}-www.conf
 Patch0:		%{name}-Makefile.patch
 Patch1:		%{name}-wwslib-pl.patch
 Patch2:		%{name}-wwsympa.fcgi-editsubsciber.fix.patch
-URL:		http://listes.cru.fr/sympa/
+URL:		http://www.sympa.org/
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	rpm-perlprov
@@ -89,7 +89,6 @@ S/MIME.
 %patch2 -p1
 
 %build
-rm -f missing
 %{__aclocal}
 %{__autoconf}
 %{__automake}
@@ -119,7 +118,7 @@ rm -f missing
 	--with-scriptdir=%{home_s}/bin \
 	--with-sampledir=/var/lib/sympa/sample \
 	--with-etcdir=%{_sysconfdir}/sympa
-	
+
 %{__make} sources nls \
 	DIR=%{home_s} \
 	CONFIG=%{_sysconfdir}/sympa/sympa.conf \
