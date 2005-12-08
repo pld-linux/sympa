@@ -44,9 +44,9 @@ case "$1" in
 	;;
   stop)
 	# Stop daemons.
-	for p in bounced archived sympa; do 
+	for p in bounced archived sympa; do
 		if [ -f /var/lock/subsys/$p ]; then
-			msg_stopping $p 
+			msg_stopping $p
 			killproc $p.pl
 			rm -f /var/lock/subsys/$p > /dev/null 2>&1
 		else
