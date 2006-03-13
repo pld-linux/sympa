@@ -2,6 +2,8 @@
 # - SECURITY: http://securitytracker.com/alerts/2004/Aug/1011016.html
 # - COMPATIBILITY: check if works with webserver != apache and update R:
 # - resolve problem with apache1 or apache2 icons directory...
+# - no globs for suid/sgid files
+# - rc-scripts service not restarted (should explain why not)
 %include	/usr/lib/rpm/macros.perl
 Summary:	Sympa - a powerful multilingual List Manager with LDAP and SQL features
 Summary(fr):	Sympa est un gestionnaire de listes électroniques
@@ -27,34 +29,34 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	rpm-perlprov
 BuildRequires:	rpmbuild(macros) >= 1.202
-PreReq:		rc-scripts
+Requires(post):	fileutils
+Requires(post):	grep
+Requires(post,preun):	/sbin/chkconfig
+Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	/usr/sbin/userdel
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
 Requires(pre):	/usr/sbin/usermod
-Requires(post,preun):	/sbin/chkconfig
-Requires(post):	fileutils
-Requires(post):	grep
-Requires(postun):	/usr/sbin/groupdel
-Requires(postun):	/usr/sbin/userdel
 Requires:	MHonArc >= 2.4.5
-Requires:	webserver = apache
-Requires:	perl-MailTools >= 1.14
-Requires:	perl-MIME-Base64 >= 1.0
-Requires:	perl-IO-stringy >= 1.0
-Requires:	perl-Locale-Msgcat >= 1.03
-Requires:	perl-MIME-tools >= 5.209
+Requires:	perl-CGI >= 2.85
 Requires:	perl-CGI-modules >= 2.52
 Requires:	perl-DBI >= 1.06
-Requires:	perl-ldap >= 0.10
 Requires:	perl-DB_File >= 1.805
-Requires:	perl-CGI >= 2.85
+Requires:	perl-IO-stringy >= 1.0
+Requires:	perl-Locale-Msgcat >= 1.03
+Requires:	perl-MIME-Base64 >= 1.0
+Requires:	perl-MIME-tools >= 5.209
+Requires:	perl-MailTools >= 1.14
+Requires:	perl-ldap >= 0.10
+Requires:	rc-scripts
+Requires:	webserver = apache
 ## Also requires a DBD for the DBMS
 ## (perl-DBD-Pg or Perl- Msql-Mysql-modules)
-Requires:	perl-FCGI >= 0.48
-Requires:	perl-Digest-MD5
 Requires:	openssl >= 0.9.7
+Requires:	perl-Digest-MD5
+Requires:	perl-FCGI >= 0.48
 Provides:	group(sympa)
 Provides:	user(sympa)
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
