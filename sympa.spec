@@ -4,6 +4,7 @@
 # - resolve problem with apache1 or apache2 icons directory...
 # - no globs for suid/sgid files
 # - rc-scripts service not restarted (should explain why not)
+# - $HOSTNAME not present in all shells (see %%post)
 %include	/usr/lib/rpm/macros.perl
 Summary:	Sympa - a powerful multilingual List Manager with LDAP and SQL features
 Summary(fr):	Sympa est un gestionnaire de listes électroniques
@@ -156,10 +157,13 @@ fi
 
 %post
 /sbin/chkconfig --add sympa
+# FIXME $HOSTNAME not present in all shells
+# TODO: use sed
 %{__perl} -pi -e "s|MYHOST|${HOSTNAME}|g" /etc/sympa/sympa.conf /etc/sympa/wwsympa.conf
 
 # Setup log facility for Sympa
 if [ -f /etc/syslog.conf ]; then
+	# TODO: touch sysklogd.spec/syslog-ng/metalog.spec/..... instead
 	if [ `grep -c sympa /etc/syslog.conf` -eq 0 ] ;then
 		typeset -i cntlog
 		cntlog=0
