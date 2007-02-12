@@ -7,8 +7,8 @@
 # - $HOSTNAME not present in all shells (see %%post)
 %include	/usr/lib/rpm/macros.perl
 Summary:	Sympa - a powerful multilingual List Manager with LDAP and SQL features
-Summary(fr):	Sympa est un gestionnaire de listes électroniques
-Summary(pl):	Sympa - u¿yteczny, wielojêzyczny zarz±dca list z obs³ug± LDAP i SQL
+Summary(fr.UTF-8):   Sympa est un gestionnaire de listes Ã©lectroniques
+Summary(pl.UTF-8):   Sympa - uÅ¼yteczny, wielojÄ™zyczny zarzÄ…dca list z obsÅ‚ugÄ… LDAP i SQL
 Name:		sympa
 Version:	3.4.4.3
 Release:	5
@@ -75,14 +75,14 @@ provides S/MIME-based authentication and encryption.
 
 Documentation is available under HTML and Latex (source) formats.
 
-%description -l pl
-Sympa jest skalowalnym i wysoko konfigurowalnym zarz±dc± pocztowych
-list dyskusyjnych. Radzi sobie z du¿ymi listami (100 000
-subskrybentów) i przychodzi z pe³nym (u¿ytkownika i administratora)
-interfejsem WWW. Jest zlokalizowany, obs³uguje jêzyki us, fr, de, es,
-it, fi, zh. Jêzyk skryptowy pozwala na rozszerzanie komend. Sympa mo¿e
-obs³ugiwaæ katalog LDAP lub relacyjne bazy danych do tworzenia
-dynamicznych list. Obs³uguje uwierzytelnianie i szyfrowanie oparte o
+%description -l pl.UTF-8
+Sympa jest skalowalnym i wysoko konfigurowalnym zarzÄ…dcÄ… pocztowych
+list dyskusyjnych. Radzi sobie z duÅ¼ymi listami (100 000
+subskrybentÃ³w) i przychodzi z peÅ‚nym (uÅ¼ytkownika i administratora)
+interfejsem WWW. Jest zlokalizowany, obsÅ‚uguje jÄ™zyki us, fr, de, es,
+it, fi, zh. JÄ™zyk skryptowy pozwala na rozszerzanie komend. Sympa moÅ¼e
+obsÅ‚ugiwaÄ‡ katalog LDAP lub relacyjne bazy danych do tworzenia
+dynamicznych list. ObsÅ‚uguje uwierzytelnianie i szyfrowanie oparte o
 S/MIME.
 
 %prep
