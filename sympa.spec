@@ -7,8 +7,8 @@
 # - $HOSTNAME not present in all shells (see %%post)
 %include	/usr/lib/rpm/macros.perl
 Summary:	Sympa - a powerful multilingual List Manager with LDAP and SQL features
-Summary(fr.UTF-8):   Sympa est un gestionnaire de listes électroniques
-Summary(pl.UTF-8):   Sympa - użyteczny, wielojęzyczny zarządca list z obsługą LDAP i SQL
+Summary(fr.UTF-8):	Sympa est un gestionnaire de listes électroniques
+Summary(pl.UTF-8):	Sympa - użyteczny, wielojęzyczny zarządca list z obsługą LDAP i SQL
 Name:		sympa
 Version:	3.4.4.3
 Release:	5
