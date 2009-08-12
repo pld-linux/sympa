@@ -10,12 +10,12 @@ Summary:	Sympa - a powerful multilingual List Manager with LDAP and SQL features
 Summary(fr.UTF-8):	Sympa est un gestionnaire de listes électroniques
 Summary(pl.UTF-8):	Sympa - użyteczny, wielojęzyczny zarządca list z obsługą LDAP i SQL
 Name:		sympa
-Version:	3.4.4.3
-Release:	5
+Version:	6.0
+Release:	0.1
 License:	GPL
 Group:		Applications/Mail
-Source0:	http://www.sympa.org/distribution/%{name}-%{version}.tar.gz
-# Source0-md5:	60105b5041c61696815fc7ce4cb6f728
+Source0:	http://www.sympa.org/distribution/%{name}-%{version}b.2.tar.gz
+# Source0-md5:	06336a063cbdd289b3c1e893f45408b4
 Source1:	%{name}-pl-3.3.5-020515.tar.bz2
 # Source1-md5:	2a46fe55e877cc0a471507f8c93fbeab
 Source2:	%{name}.init
@@ -86,43 +86,48 @@ dynamicznych list. Obsługuje uwierzytelnianie i szyfrowanie oparte o
 S/MIME.
 
 %prep
-%setup -q -a1
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
+%setup -q -a1 -n sympa-6.0b.2
+#%patch0 -p1
+#%patch1 -p1
+#%patch2 -p1
 
 %build
 %{__aclocal}
 %{__autoconf}
 %{__automake}
 %configure \
-	--with-confdir=%{_sysconfdir}/sympa \
-	--with-cgidir=%{home_s}/sbin \
-	--with-iconsdir=/home/services/httpd/icons/sympa \
+        --prefix=%{home_s} \
+        --exec-prefix=%{home_s} \
 	--with-bindir=%{home_s}/bin \
-	--with-sbindir=%{home_s}/sbin \
-	--with-libexecdir=%{home_s}/bin \
-	--with-libdir=%{home_s}/lib \
-	--with-datadir=%{home_s}/etc \
-	--with-expldir=%{home_s}/expl \
+	--with-cgidir=%{home_s}/fcgi \
+	--with-confdir=%{_sysconfdir}/sympa \
+	--libexecdir=%{home_s}/bin \
+	--localedir=%{_localedir} \
 	--with-initdir=/etc/rc.d/init.d \
-	--with-piddir=/var/run \
-	--with-spooldir=/var/lib/sympa/spool \
 	--with-perl=%{__perl} \
-	--with-mhonarc=%{_bindir}/mhonarc \
+	--sbindir=%{home_s}/sbin \
 	--with-user=sympa \
 	--with-group=sympa \
+	--with-piddir=/var/run \
+	--with-spooldir=/var/spool/sympa \
 	--with-sendmail_aliases=/etc/mail/sympa_aliases \
 	--with-virtual_aliases=/etc/mail/sympa_virtual \
+        --with-modulesdir=%{_libdir}/sympa \
 	--with-newaliases=%{_bindir}/newaliases \
-	--with-postmap=%{_bindir}/postmap \
-	--with-mandir=%{_mandir} \
-	--with-nlsdir=/var/lib/sympa/nls \
-	--with-scriptdir=%{home_s}/bin \
-	--with-sampledir=/var/lib/sympa/sample \
-	--with-etcdir=%{_sysconfdir}/sympa
+	--sysconfdir=%{_sysconfdir}/sympa
 
-%{__make} sources nls \
+#	--with-cgidir=%{home_s}/sbin \
+#	--with-bindir=%{home_s}/bin \
+#	--sbindir=%{home_s}/sbin \
+#	--libexecdir=%{home_s}/bin \
+#	--with-defaultdir=%{home_s}/default \
+#	--datadir=%{home_s}/etc \
+#	--with-expldir=%{home_s}/expl \
+#	--with-postmap=%{_bindir}/postmap \
+#	--mandir=%{_mandir} \
+#	--with-scriptdir=%{home_s}/bin \
+
+%{__make} \
 	DIR=%{home_s} \
 	CONFIG=%{_sysconfdir}/sympa/sympa.conf \
 	CVS2CL=%{_bindir}/cvs2cl.pl
@@ -138,10 +143,19 @@ perl -pi -e 's#chown.*root#chown \$(USER)#g' src/Makefile
 	GROUP=$(id -g) \
 	DESTDIR=$RPM_BUILD_ROOT
 
+exit -1
+
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/rc.d/init.d/sympa
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/sympa
 install %{SOURCE4} $RPM_BUILD_ROOT%{_sysconfdir}/sympa/sympa.conf
 install %{SOURCE5} $RPM_BUILD_ROOT%{_sysconfdir}/sympa/wwsympa.conf
+
+mv $RPM_BUILD_ROOT%{home_s}/locale $RPM_BUILD_ROOT/usr/share
+rm -r $RPM_BUILD_ROOT%{home_s}/share/doc
+
+%find_lang %{name}
+%find_lang web_help
+cat web_help.lang >> %{name}.lang
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -219,47 +233,30 @@ if [ "$1" = "0" -a -d /etc/smrsh ]; then
 	fi
 fi
 
-%files
+%files -f %{name}.lang
 %defattr(644,root,root,755)
-%doc [ACKNR]* doc/html
+%doc [ACKNR]*
 
-# needs fixing - don't use attr(-)!
-%attr(755,sympa,sympa) %dir %{home_s}
-%attr(755,sympa,sympa) %dir %{home_s}/bin
-%attr(-,sympa,sympa) %{home_s}/bin/*.pl
-%attr(-,sympa,sympa) %{home_s}/bin/create_db.*
-%attr(4755,sympa,sympa) %{home_s}/bin/queue
-%attr(4755,sympa,sympa) %{home_s}/bin/bouncequeue
-%attr(4755,sympa,sympa) %{home_s}/bin/*wrapper
+%attr(750,root,sympa) %dir %{home_s}
+%attr(750,root,sympa) %dir %{home_s}/bin
+%attr(4750,root,sympa) %{home_s}/sbin/*
+%attr(4750,root,sympa) %{home_s}/bin/*
 
-%attr(755,sympa,sympa) %dir %{home_s}/etc
-%attr(-,sympa,sympa) %{home_s}/etc/*
+%{home_s}/default
+%{home_s}/static_content
+
 %attr(755,sympa,sympa) %dir %{home_s}/expl
-#%attr(  -,sympa,sympa) %{home_s}/expl/*
 
-%attr(755,sympa,sympa) %dir %{home_s}/lib
-%attr(755,sympa,sympa) %dir %{home_s}/lib/Marc
-%attr(-,sympa,sympa) %{home_s}/lib/Marc/*
-%attr(-,sympa,sympa) %{home_s}/lib/*.pm
-%attr(-,sympa,sympa) %{home_s}/lib/*.pl
+%dir %{_libdir}/sympa
+%{_libdir}/sympa
 
-%attr(755,sympa,sympa) %dir %{home_s}/nls
-%attr(-,sympa,sympa) %{home_s}/nls/*.msg
-%attr(755,sympa,sympa) %dir %{home_s}/sample
-%attr(-,sympa,sympa) %{home_s}/sample/*
+%attr(755,root,root) %{home_s}/fcgi/*.fcgi
 
-%attr(755,sympa,sympa) %dir %{home_s}/sbin
-%attr(-,sympa,sympa) %{home_s}/sbin/*.pl
-%attr(-,sympa,sympa) %{home_s}/sbin/wwsympa.fcgi
-
-%attr(755,sympa,sympa) %dir %{home_s}/spool
-%attr(744,sympa,sympa) %dir %{home_s}/spool/*
-
-%dir /home/services/httpd/icons/sympa
-/home/services/httpd/icons/sympa/*
+%attr(755,sympa,sympa) %dir /var/spool/sympa
+%attr(744,sympa,sympa) %dir /var/spool/sympa/*
 
 %dir %{_sysconfdir}/sympa
-%attr(640,sympa,sympa) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sympa/*.conf
-%attr(640,sympa,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/sympa
+%attr(640,root,sympa) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/sympa/*.conf
+%attr(640,root,sympa) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/sympa
 %attr(754,root,root) /etc/rc.d/init.d/sympa
 %{_mandir}/man[58]/*
