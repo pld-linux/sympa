@@ -30,7 +30,7 @@ RETVAL=0
 case "$1" in
   start)
 	# Check if the service is already running?
-	for p in sympa archived bounced; do
+	for p in sympa bulk archived bounced task_manager; do
 		if [ ! -f /var/lock/subsys/$p ]; then
 			msg_starting $p
 	 		daemon $SYMPA_DIR/$p.pl $(eval echo "\$SYMPA_"$p"_OPT")
@@ -44,7 +44,7 @@ case "$1" in
 	;;
   stop)
 	# Stop daemons.
-	for p in bounced archived sympa; do
+	for p in bounced archived bulk sympa task_manager; do
 		if [ -f /var/lock/subsys/$p ]; then
 			msg_stopping $p
 			killproc $p.pl
@@ -55,7 +55,7 @@ case "$1" in
 	done
 	;;
   status)
-	for p in sympa archived bounced; do
+	for p in sympa archived bulk bounced task_manager; do
 		status $p.pl
 		[ $RETVAL -eq 0 ] && RETVAL=$?
 	done
