@@ -5,7 +5,6 @@
 # - no globs for suid/sgid files
 # - rc-scripts service not restarted (should explain why not)
 # - $HOSTNAME not present in all shells (see %%post)
-%include	/usr/lib/rpm/macros.perl
 Summary:	Sympa - a powerful multilingual List Manager with LDAP and SQL features
 Summary(fr.UTF-8):	Sympa est un gestionnaire de listes électroniques
 Summary(pl.UTF-8):	Sympa - użyteczny, wielojęzyczny zarządca list z obsługą LDAP i SQL
