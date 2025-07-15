@@ -86,9 +86,9 @@ S/MIME.
 
 %prep
 %setup -q -a1 -n sympa-6.0b.2
-#%patch0 -p1
-#%patch1 -p1
-#%patch2 -p1
+#%%patch0 -p1
+#%%patch1 -p1
+#%%patch2 -p1
 
 %build
 %{__aclocal}
